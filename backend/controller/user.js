@@ -80,9 +80,7 @@ router.post(
         return sendToastError(res, "Invalid token");
       }
       const { name, email, password, avatar } = newUser;
-      console.log("email", email);
       let user = await User.findOne({ email });
-      console.log("user: ", user);
       if (user) {
         // return next(new ErrorHandler("User already exists", 400));
         return sendToastError(res, "User already exists");

@@ -9,6 +9,9 @@ import EventsPage from "./pages/EventsPage.jsx";
 import ProductDetailsPage from "./pages/ProductDetailsPage.jsx";
 import ProfilePage from "./pages/ProfilePage.jsx";
 import ProtectedRoute from "./routes/ProtectedRoute.jsx";
+import ShopCreatePage from "./pages/ShopCreatePage.jsx";
+import SellerActivationPage from "./pages/SellerActivationPage.jsx";
+import ShopLoginPage from "./pages/ShopLoginPage.jsx";
 export {
   LoginPage,
   SignupPage,
@@ -21,4 +24,7 @@ export {
   ProductDetailsPage,
   ProfilePage,
   ProtectedRoute,
+  ShopCreatePage,
+  SellerActivationPage,
+  ShopLoginPage,
 };
