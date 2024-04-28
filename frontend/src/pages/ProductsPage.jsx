@@ -6,25 +6,25 @@ import Header from "../Components/Layout/Header";
 // import Loader from "../components/Layout/Loader";
 import ProductCard from "../Components/Route/ProductCard/ProductCard";
 import styles from "../styles/styles";
-import { productData } from "../static/data";
+import { allProducts } from "../static/data";
 
 const ProductsPage = () => {
   const [searchParams] = useSearchParams();
   const categoryData = searchParams.get("category");
-  //   const { allProducts, isLoading } = useSelector((state) => state.products);
+  const { allProducts, isLoading } = useSelector((state) => state.products);
   const [data, setData] = useState([]);
 
   useEffect(() => {
     if (categoryData === null) {
-      const d = productData;
+      const d = allProducts;
       setData(d);
     } else {
       const d =
-        productData && productData.filter((i) => i.category === categoryData);
+        allProducts && allProducts.filter((i) => i.category === categoryData);
       setData(d);
     }
     //    window.scrollTo(0,0);
-  }, [productData]);
+  }, [allProducts]);
 
   return (
     <>

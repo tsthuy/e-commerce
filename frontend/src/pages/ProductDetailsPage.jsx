@@ -5,14 +5,13 @@ import Header from "../Components/Layout/Header";
 import ProductDetails from "../Components/Products/ProductDetails";
 import SuggestedProduct from "../Components/Products/SuggestedProduct";
 import { useSelector } from "react-redux";
-import { productData } from "../static/data";
 
 const ProductDetailsPage = () => {
-  //   const { allProducts } = useSelector((state) => state.products);
+  const { allProducts } = useSelector((state) => state.products);
   //   const { allEvents } = useSelector((state) => state.events);
   const { id } = useParams();
   const [data, setData] = useState(null);
-  //   const [searchParams] = useSearchParams();
+  // const [searchParams] = useSearchParams();
   //   const eventData = searchParams.get("isEvent");
 
   useEffect(() => {
@@ -21,7 +20,7 @@ const ProductDetailsPage = () => {
     //   setData(data);
     // } else {
 
-    const dataSend = productData && productData.find((i) => i.id == id);
+    const dataSend = allProducts && allProducts.find((i) => i._id == id);
     setData(dataSend);
   }, []);
 

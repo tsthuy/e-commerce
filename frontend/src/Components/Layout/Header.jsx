@@ -19,14 +19,16 @@ import { RxCross1 } from "react-icons/rx";
 
 const Header = ({ activeHeading }) => {
   const { isAuthenticated, user } = useSelector((state) => state.user);
-  //   const { isSeller } = useSelector((state) => state.seller);
+  // const { isSeller } = useSelector((state) => state.seller);
   const isSeller = 0;
-  const wishlist = 0;
-  const cart = 0;
 
-  //   const { wishlist } = useSelector((state) => state.wishlist);
+  const cart = 0;
+  console.log(productData);
+  const { wishlist } = useSelector((state) => state.wishlist);
   //   const { cart } = useSelector((state) => state.cart);
-  //   const { allProducts } = useSelector((state) => state.products);
+  const { allProducts } = useSelector((state) => state.products);
+  console.log(allProducts);
+
   const [searchTerm, setSearchTerm] = useState("");
   const [searchData, setSearchData] = useState(null);
   const [active, setActive] = useState(false);
@@ -36,14 +38,16 @@ const Header = ({ activeHeading }) => {
   const [open, setOpen] = useState(false);
 
   const handleSearchChange = (e) => {
+    console.log(e);
     const term = e.target.value;
     setSearchTerm(term);
 
     const filteredProducts =
-      productData &&
-      productData.filter((product) =>
+      allProducts &&
+      allProducts.filter((product) =>
         product.name.toLowerCase().includes(term.toLowerCase())
       );
+    console.log(filteredProducts);
     setSearchData(filteredProducts);
   };
 
@@ -54,7 +58,7 @@ const Header = ({ activeHeading }) => {
       setActive(false);
     }
   });
-
+  console.log(searchData);
   return (
     <>
       <div className={`${styles.section}`}>
@@ -80,23 +84,25 @@ const Header = ({ activeHeading }) => {
               size={30}
               className="absolute right-2 top-1.5 cursor-pointer"
             />
+
             {searchData && searchData.length !== 0 ? (
-              <div className="absolute min-h-[30vh] bg-slate-50 shadow-sm-2 z-[9] p-4">
-                {searchData &&
-                  searchData.map((i, index) => {
-                    return (
-                      <Link key={i} to={`/product/${i._id}`}>
-                        <div key={i} className="w-full flex items-start-py-3">
-                          <img
-                            src={i.image_Url[0].url}
-                            alt=""
-                            className="w-[40px] h-[40px] mr-[10px]"
-                          />
-                          <h1>{i.name}</h1>
-                        </div>
-                      </Link>
-                    );
-                  })}
+              <div className="absolute min-h-[30vh] bg-slate-50 shadow-sm-2 z-[9] p-4 w-full">
+                {searchData.map((product, index) => (
+                  <Link
+                    key={index}
+                    to={`/product/${product._id}`}
+                    className="w-full"
+                  >
+                    <div key={index} className="w-full flex items-start-py-3">
+                      <img
+                        src={`${product.images[0]?.url}`}
+                        alt=""
+                        className="w-[40px] h-[40px] mr-[10px]"
+                      />
+                      <h1>{product.name}</h1>
+                    </div>
+                  </Link>
+                ))}
               </div>
             ) : null}
           </div>

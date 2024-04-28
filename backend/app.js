@@ -23,13 +23,14 @@ if (process.env.NODE_ENV !== "PRODUCTION") {
     path: "backend/config/.env",
   });
 }
-// handler error
-app.use(ErrorHandler);
 
 // import
 const user = require("./controller/user");
 const shop = require("./controller/shop");
+const product = require("./controller/product");
 app.use("/api/v2/user", user);
 app.use("/api/v2/shop", shop);
-
+app.use("/api/v2/product", product);
+// handler error
+app.use(ErrorHandler);
 module.exports = app;

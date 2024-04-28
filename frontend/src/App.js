@@ -17,16 +17,25 @@ import {
   SellerActivationPage,
   ShopLoginPage,
 } from "./Routers.js";
+import {
+  ShopDashBoardPage,
+  ShopCreateProduct,
+  ShopAllProducts,
+} from "./ShopRoute.js";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Store from "./redux/store.js";
 import { loadUser, loadSeller } from "./redux/actions/user.js";
+import SellerProtectedRoute from "./routes/SellerProtectedRoute.jsx";
+import ShopHomePage from "./pages/Shop/ShopHomePage.jsx";
+import { getAllProducts } from "./redux/actions/product.js";
 // import { getAllSellers } from "./redux/actions/seller.js";
 const App = () => {
   useEffect(() => {
     Store.dispatch(loadUser());
     Store.dispatch(loadSeller());
     // Store.dispatch(getAllSellers());
+    Store.dispatch(getAllProducts());
   }, []);
   return (
     <>
@@ -59,6 +68,38 @@ const App = () => {
           />
           <Route path="/shop-create" element={<ShopCreatePage />} />
           <Route path="/shop-login" element={<ShopLoginPage />} />
+          <Route
+            path="/dashboard"
+            element={
+              <SellerProtectedRoute>
+                <ShopDashBoardPage />
+              </SellerProtectedRoute>
+            }
+          />
+          <Route
+            path="/shop/:id"
+            element={
+              <SellerProtectedRoute>
+                <ShopHomePage />
+              </SellerProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard-create-product"
+            element={
+              <SellerProtectedRoute>
+                <ShopCreateProduct />
+              </SellerProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard-products"
+            element={
+              <SellerProtectedRoute>
+                <ShopAllProducts />
+              </SellerProtectedRoute>
+            }
+          />
         </Routes>
         <ToastContainer
           position="bottom-center"

@@ -1,8 +1,10 @@
 import React, { useState } from "react";
+
 import {
   AiOutlineArrowRight,
   AiOutlineCamera,
   AiOutlineDelete,
+  AiOutlineEye,
 } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import { server } from "../../server";

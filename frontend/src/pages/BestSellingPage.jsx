@@ -6,16 +6,15 @@ import Loader from "../Components/Layout/Loader";
 import ProductCard from "../Components/Route/ProductCard/ProductCard";
 import styles from "../styles/styles";
 import Footer from "../Components/Layout/Footer";
-import { productData } from "../static/data";
 const BestSellingPage = () => {
   const [data, setData] = useState([]);
-  //   const { allProducts, isLoading } = useSelector((state) => state.products);
+  const { allProducts, isLoading } = useSelector((state) => state.products);
 
   useEffect(() => {
-    const allProductsData = productData ? [...productData] : [];
+    const allProductsData = allProducts ? [...allProducts] : [];
     const sortedData = allProductsData?.sort((a, b) => b.sold_out - a.sold_out);
     setData(sortedData);
-  }, [productData]);
+  }, [allProducts]);
 
   return (
     <>

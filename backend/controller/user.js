@@ -119,7 +119,10 @@ router.post(
       const isPasswordValid = await user.comparePassword(password);
 
       if (!isPasswordValid) {
-        return sendToastError(res, "Please provide correct information");
+        // return sendToastError(res, "Please provide correct information");
+        return next(
+          new ErrorHandler("Please provide the correct information", 400)
+        );
       }
 
       // Gửi mã thông báo đến người dùng

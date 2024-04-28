@@ -7,36 +7,36 @@ import {
 } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-// import { getAllProductsShop } from "../../redux/actions/product";
+import { getAllProductsShop } from "../../redux/actions/product";
 import { server } from "../../server";
 import styles from "../../styles/styles";
-// import {
-//   addToWishlist,
-//   removeFromWishlist,
-// } from "../../redux/actions/wishlist";
+import {
+  addToWishlist,
+  removeFromWishlist,
+} from "../../redux/actions/wishlist";
 // import { addTocart } from "../../redux/actions/cart";
 import { toast } from "react-toastify";
 import Ratings from "./Ratings";
 import axios from "axios";
 
 const ProductDetails = ({ data }) => {
-  //   const { wishlist } = useSelector((state) => state.wishlist);
+  const { wishlist } = useSelector((state) => state.wishlist);
   //   const { cart } = useSelector((state) => state.cart);
   const { user, isAuthenticated } = useSelector((state) => state.user);
-  //   const { products } = useSelector((state) => state.products);
+  const { products } = useSelector((state) => state.products);
   const [count, setCount] = useState(1);
   const [click, setClick] = useState(false);
   const [select, setSelect] = useState(0);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  //   useEffect(() => {
-  //     dispatch(getAllProductsShop(data && data?.shop._id));
-  //     if (wishlist && wishlist.find((i) => i._id === data?._id)) {
-  //       setClick(true);
-  //     } else {
-  //       setClick(false);
-  //     }
-  //   }, [data, wishlist]);
+  useEffect(() => {
+    dispatch(getAllProductsShop(data && data?.shop._id));
+    if (wishlist && wishlist.find((i) => i._id === data?._id)) {
+      setClick(true);
+    } else {
+      setClick(false);
+    }
+  }, [data, wishlist]);
 
   const incrementCount = () => {
     setCount(count + 1);
@@ -48,15 +48,15 @@ const ProductDetails = ({ data }) => {
     }
   };
 
-  //   const removeFromWishlistHandler = (data) => {
-  //     setClick(!click);
-  //     dispatch(removeFromWishlist(data));
-  //   };
+  const removeFromWishlistHandler = (data) => {
+    setClick(!click);
+    dispatch(removeFromWishlist(data));
+  };
 
-  //   const addToWishlistHandler = (data) => {
-  //     setClick(!click);
-  //     dispatch(addToWishlist(data));
-  //   };
+  const addToWishlistHandler = (data) => {
+    setClick(!click);
+    dispatch(addToWishlist(data));
+  };
 
   //   const addToCartHandler = (id) => {
   //     const isItemExists = cart && cart.find((i) => i._id === id);
@@ -110,7 +110,6 @@ const ProductDetails = ({ data }) => {
   //       toast.error("Please login to create a conversation");
   //     }
   //   };
-  console.log("from pductdetail", data);
   return (
     <div className="bg-white">
       {data ? (
@@ -119,13 +118,13 @@ const ProductDetails = ({ data }) => {
             <div className="block w-full 800px:flex">
               <div className="w-full 800px:w-[50%]">
                 <img
-                  src={`${data && data.image_Url[select]?.url}`}
+                  src={`${data && data.images[select]?.url}`}
                   alt=""
                   className="w-[80%]"
                 />
                 <div className="w-full flex">
                   {data &&
-                    data.image_Url.map((i, index) => (
+                    data.images.map((i, index) => (
                       <div
                         key={index}
                         className={`${
@@ -184,7 +183,7 @@ const ProductDetails = ({ data }) => {
                       <AiFillHeart
                         size={30}
                         className="cursor-pointer"
-                        // onClick={() => removeFromWishlistHandler(data)}
+                        onClick={() => removeFromWishlistHandler(data)}
                         color={click ? "red" : "#333"}
                         title="Remove from wishlist"
                       />
@@ -192,7 +191,7 @@ const ProductDetails = ({ data }) => {
                       <AiOutlineHeart
                         size={30}
                         className="cursor-pointer"
-                        // onClick={() => addToWishlistHandler(data)}
+                        onClick={() => addToWishlistHandler(data)}
                         color={click ? "red" : "#333"}
                         title="Add to wishlist"
                       />
