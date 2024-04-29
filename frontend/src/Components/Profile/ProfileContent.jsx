@@ -1,10 +1,8 @@
 import React, { useState } from "react";
-
 import {
   AiOutlineArrowRight,
   AiOutlineCamera,
   AiOutlineDelete,
-  AiOutlineEye,
 } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import { server } from "../../server";
@@ -14,19 +12,17 @@ import { Button } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import { MdTrackChanges } from "react-icons/md";
 import { RxCross1 } from "react-icons/rx";
-import { AgGridReact } from "ag-grid-react";
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-alpine.css";
-// import {
-//   deleteUserAddress,
-//   loadUser,
-//   updatUserAddress,
-//   updateUserInformation,
-// } from "../../redux/actions/user";
+import {
+  deleteUserAddress,
+  loadUser,
+  updatUserAddress,
+  updateUserInformation,
+} from "../../redux/actions/user";
 import { Country, State } from "country-state-city";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { clearErrors, clearMessages } from "../../redux/reducers/user";
 // import { getAllOrdersOfUser } from "../../redux/actions/order";
 
 const ProfileContent = ({ active }) => {
@@ -41,45 +37,45 @@ const ProfileContent = ({ active }) => {
   useEffect(() => {
     if (error) {
       toast.error(error);
-      dispatch({ type: "clearErrors" });
+      dispatch(clearErrors());
     }
     if (successMessage) {
       toast.success(successMessage);
-      dispatch({ type: "clearMessages" });
+      dispatch(clearMessages());
     }
   }, [error, successMessage]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // dispatch(updateUserInformation(name, email, phoneNumber, password));
+    dispatch(updateUserInformation(name, email, phoneNumber, password));
   };
 
-  //   const handleImage = async (e) => {
-  //     const reader = new FileReader();
+  const handleImage = async (e) => {
+    const reader = new FileReader();
 
-  //     reader.onload = () => {
-  //       if (reader.readyState === 2) {
-  //         setAvatar(reader.result);
-  //         axios
-  //           .put(
-  //             `${server}/user/update-avatar`,
-  //             { avatar: reader.result },
-  //             {
-  //               withCredentials: true,
-  //             }
-  //           )
-  //           .then((response) => {
-  //             // dispatch(loadUser());
-  //             toast.success("avatar updated successfully!");
-  //           })
-  //           .catch((error) => {
-  //             toast.error(error);
-  //           });
-  //       }
-  //     };
+    reader.onload = () => {
+      if (reader.readyState === 2) {
+        setAvatar(reader.result);
+        axios
+          .put(
+            `${server}/user/update-avatar`,
+            { avatar: reader.result },
+            {
+              withCredentials: true,
+            }
+          )
+          .then((response) => {
+            dispatch(loadUser());
+            toast.success("avatar updated successfully!");
+          })
+          .catch((error) => {
+            toast.error(error);
+          });
+      }
+    };
 
-  //     reader.readAsDataURL(e.target.files[0]);
-  //   };
+    reader.readAsDataURL(e.target.files[0]);
+  };
 
   return (
     <div className="w-full">
@@ -98,7 +94,7 @@ const ProfileContent = ({ active }) => {
                   type="file"
                   id="image"
                   className="hidden"
-                  //   onChange={handleImage}
+                  onChange={handleImage}
                 />
                 <label htmlFor="image">
                   <AiOutlineCamera />
@@ -148,7 +144,7 @@ const ProfileContent = ({ active }) => {
                 <div className=" w-[100%] 800px:w-[50%]">
                   <label className="block pb-2">Enter your password</label>
                   <input
-                    type="password"
+                    type="text"
                     className={`${styles.input} !w-[95%] mb-4 800px:mb-0`}
                     required
                     value={password}
@@ -206,177 +202,17 @@ const ProfileContent = ({ active }) => {
 };
 
 const AllOrders = () => {
-  const rowData = [
-    // ...dữ liệu của bạn
-    {
-      id: "938467938dhsdf83434",
-      name: "Iphone",
-      itemsQty: 1,
-      total: 120,
-      status: "Processing",
-    },
-    // thêm các đơn hàng khác tại đây
-  ];
-
-  const columnDefs = [
-    { field: "id", headerName: "Order ID", minWidth: 150, flex: 0.7 },
-    {
-      field: "name",
-      headerName: "Name",
-      minWidth: 150,
-      cellRendererFramework: (params) => (
-        <Link to={`/user/order/${params.value}`}>
-          <Button>
-            <AiOutlineArrowRight size={20} />
-          </Button>
-        </Link>
-      ),
-    },
-    {
-      field: "status",
-      headerName: "Status",
-      minWidth: 130,
-      flex: 0.7,
-      cellStyle: (params) =>
-        params.value === "Delivered" ? { color: "green" } : { color: "red" },
-    },
-    {
-      field: "itemsQty",
-      headerName: "Items Qty",
-      type: "number",
-      minWidth: 130,
-      flex: 0.7,
-    },
-    {
-      field: "total",
-      headerName: "Total",
-      type: "number",
-      minWidth: 130,
-      flex: 0.8,
-    },
-  ];
-
-  return (
-    <div className="ag-theme-alpine" style={{ height: 400, width: "100%" }}>
-      <AgGridReact
-        rowData={rowData}
-        columnDefs={columnDefs}
-        domLayout="autoHeight"
-      />
-    </div>
-  );
-};
-
-const AllRefundOrders = () => {
-  //   const { user } = useSelector((state) => state.user);
-  const row = [
-    // ...dữ liệu của bạn
-    {
-      id: "938467938dhsdf83434",
-      name: "Iphone",
-      itemsQty: 1,
-      total: 120,
-      status: "Processing",
-    },
-    // thêm các đơn hàng khác tại đây
-  ];
-  //   const { orders } = useSelector((state) => state.order);
+  const { user } = useSelector((state) => state.user);
+  const { orders } = useSelector((state) => state.order);
   const dispatch = useDispatch();
 
   useEffect(() => {
     // dispatch(getAllOrdersOfUser(user._id));
   }, []);
 
-  //   const eligibleOrders =
-  //     orders && orders.filter((item) => item.status === "Processing refund");
-
-  const column = [
+  const columns = [
     { field: "id", headerName: "Order ID", minWidth: 150, flex: 0.7 },
-    {
-      field: "name",
-      headerName: "Name",
-      minWidth: 150,
-      cellRendererFramework: (params) => (
-        <Link to={`/user/order/${params.value}`}>
-          <Button>
-            <AiOutlineArrowRight size={20} />
-          </Button>
-        </Link>
-      ),
-    },
-    {
-      field: "status",
-      headerName: "Status",
-      minWidth: 130,
-      flex: 0.7,
-      cellStyle: (params) =>
-        params.value === "Delivered" ? { color: "green" } : { color: "red" },
-    },
-    {
-      field: "itemsQty",
-      headerName: "Items Qty",
-      type: "number",
-      minWidth: 130,
-      flex: 0.7,
-    },
-    {
-      field: "total",
-      headerName: "Total",
-      type: "number",
-      minWidth: 130,
-      flex: 0.8,
-    },
-  ];
 
-  //   const row = [];
-
-  //   eligibleOrders &&
-  //     eligibleOrders.forEach((item) => {
-  //       row.push({
-  //         id: item._id,
-  //         itemsQty: item.cart.length,
-  //         total: "US$ " + item.totalPrice,
-  //         status: item.status,
-  //       });
-  //     });
-
-  return (
-    <div className="ag-theme-alpine" style={{ height: 400, width: "100%" }}>
-      <AgGridReact rowData={row} columnDefs={column} domLayout="autoHeight" />
-    </div>
-  );
-};
-
-const TrackOrder = () => {
-  //   const { user } = useSelector((state) => state.user);
-  //   const { orders } = useSelector((state) => state.order);
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    // dispatch(getAllOrdersOfUser(user._id));
-  }, []);
-
-  const column = [
-    { field: "id", headerName: "Order ID", minWidth: 150, flex: 0.7 },
-    {
-      field: "name",
-      flex: 1,
-      minWidth: 150,
-      headerName: "Name",
-      type: "number",
-      sortable: false,
-      renderCell: (params) => {
-        return (
-          <>
-            <Link to={`/user/track/order/${params.id}`}>
-              <Button>
-                <MdTrackChanges size={20} />
-              </Button>
-            </Link>
-          </>
-        );
-      },
-    },
     {
       field: "status",
       headerName: "Status",
@@ -403,32 +239,222 @@ const TrackOrder = () => {
       minWidth: 130,
       flex: 0.8,
     },
-  ];
 
-  const row = [
-    // ...dữ liệu của bạn
     {
-      id: "938467938dhsdf83434",
-      name: "Iphone",
-      itemsQty: 1,
-      total: 120,
-      status: "Processing",
+      field: " ",
+      flex: 1,
+      minWidth: 150,
+      headerName: "",
+      type: "number",
+      sortable: false,
+      renderCell: (params) => {
+        return (
+          <>
+            <Link to={`/user/order/${params.id}`}>
+              <Button>
+                <AiOutlineArrowRight size={20} />
+              </Button>
+            </Link>
+          </>
+        );
+      },
     },
   ];
 
-  //   orders &&
-  //     orders.forEach((item) => {
-  //       row.push({
-  //         id: item._id,
-  //         itemsQty: item.cart.length,
-  //         total: "US$ " + item.totalPrice,
-  //         status: item.status,
-  //       });
+  const row = [];
+
+  // orders &&
+  //   orders.forEach((item) => {
+  //     row.push({
+  //       id: item._id,
+  //       itemsQty: item.cart.length,
+  //       total: "US$ " + item.totalPrice,
+  //       status: item.status,
   //     });
+  //   });
 
   return (
-    <div className="ag-theme-alpine" style={{ height: 400, width: "100%" }}>
-      <AgGridReact rowData={row} columnDefs={column} domLayout="autoHeight" />
+    <div className="pl-8 pt-1">
+      <DataGrid
+        rows={row}
+        columns={columns}
+        pageSize={10}
+        disableSelectionOnClick
+        autoHeight
+      />
+    </div>
+  );
+};
+
+const AllRefundOrders = () => {
+  const { user } = useSelector((state) => state.user);
+  // const { orders } = useSelector((state) => state.order);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    // dispatch(getAllOrdersOfUser(user._id));
+  }, []);
+
+  // const eligibleOrders =
+  //   orders && orders.filter((item) => item.status === "Processing refund");
+
+  const columns = [
+    { field: "id", headerName: "Order ID", minWidth: 150, flex: 0.7 },
+
+    {
+      field: "status",
+      headerName: "Status",
+      minWidth: 130,
+      flex: 0.7,
+      cellClassName: (params) => {
+        return params.getValue(params.id, "status") === "Delivered"
+          ? "greenColor"
+          : "redColor";
+      },
+    },
+    {
+      field: "itemsQty",
+      headerName: "Items Qty",
+      type: "number",
+      minWidth: 130,
+      flex: 0.7,
+    },
+
+    {
+      field: "total",
+      headerName: "Total",
+      type: "number",
+      minWidth: 130,
+      flex: 0.8,
+    },
+
+    {
+      field: " ",
+      flex: 1,
+      minWidth: 150,
+      headerName: "",
+      type: "number",
+      sortable: false,
+      renderCell: (params) => {
+        return (
+          <>
+            <Link to={`/user/order/${params.id}`}>
+              <Button>
+                <AiOutlineArrowRight size={20} />
+              </Button>
+            </Link>
+          </>
+        );
+      },
+    },
+  ];
+
+  const row = [];
+
+  // eligibleOrders &&
+  //   eligibleOrders.forEach((item) => {
+  //     row.push({
+  //       id: item._id,
+  //       itemsQty: item.cart.length,
+  //       total: "US$ " + item.totalPrice,
+  //       status: item.status,
+  //     });
+  //   });
+
+  return (
+    <div className="pl-8 pt-1">
+      <DataGrid
+        rows={row}
+        columns={columns}
+        pageSize={10}
+        autoHeight
+        disableSelectionOnClick
+      />
+    </div>
+  );
+};
+
+const TrackOrder = () => {
+  const { user } = useSelector((state) => state.user);
+  // const { orders } = useSelector((state) => state.order);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    // dispatch(getAllOrdersOfUser(user._id));
+  }, []);
+
+  const columns = [
+    { field: "id", headerName: "Order ID", minWidth: 150, flex: 0.7 },
+
+    {
+      field: "status",
+      headerName: "Status",
+      minWidth: 130,
+      flex: 0.7,
+      cellClassName: (params) => {
+        return params.getValue(params.id, "status") === "Delivered"
+          ? "greenColor"
+          : "redColor";
+      },
+    },
+    {
+      field: "itemsQty",
+      headerName: "Items Qty",
+      type: "number",
+      minWidth: 130,
+      flex: 0.7,
+    },
+
+    {
+      field: "total",
+      headerName: "Total",
+      type: "number",
+      minWidth: 130,
+      flex: 0.8,
+    },
+
+    {
+      field: " ",
+      flex: 1,
+      minWidth: 150,
+      headerName: "",
+      type: "number",
+      sortable: false,
+      renderCell: (params) => {
+        return (
+          <>
+            <Link to={`/user/track/order/${params.id}`}>
+              <Button>
+                <MdTrackChanges size={20} />
+              </Button>
+            </Link>
+          </>
+        );
+      },
+    },
+  ];
+
+  const row = [];
+
+  // orders &&
+  //   orders.forEach((item) => {
+  //     row.push({
+  //       id: item._id,
+  //       itemsQty: item.cart.length,
+  //       total: "US$ " + item.totalPrice,
+  //       status: item.status,
+  //     });
+  //   });
+
+  return (
+    <div className="pl-8 pt-1">
+      <DataGrid
+        rows={row}
+        columns={columns}
+        pageSize={10}
+        disableSelectionOnClick
+        autoHeight
+      />
     </div>
   );
 };
@@ -448,7 +474,7 @@ const ChangePassword = () => {
         { withCredentials: true }
       )
       .then((res) => {
-        toast.success(res.data.success);
+        toast.success(res.data.message);
         setOldPassword("");
         setNewPassword("");
         setConfirmPassword("");
@@ -539,16 +565,16 @@ const Address = () => {
     if (addressType === "" || country === "" || city === "") {
       toast.error("Please fill all the fields!");
     } else {
-      //   dispatch(
-      //     updatUserAddress(
-      //       country,
-      //       city,
-      //       address1,
-      //       address2,
-      //       zipCode,
-      //       addressType
-      //     )
-      //   );
+      dispatch(
+        updatUserAddress(
+          country,
+          city,
+          address1,
+          address2,
+          zipCode,
+          addressType
+        )
+      );
       setOpen(false);
       setCountry("");
       setCity("");
@@ -561,7 +587,7 @@ const Address = () => {
 
   const handleDelete = (item) => {
     const id = item._id;
-    // dispatch(deleteUserAddress(id));
+    dispatch(deleteUserAddress(id));
   };
 
   return (

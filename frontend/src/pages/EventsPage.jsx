@@ -5,15 +5,17 @@ import Header from "../Components/Layout/Header";
 import Loader from "../Components/Layout/Loader";
 
 const EventsPage = () => {
-  //   const { allEvents, isLoading } = useSelector((state) => state.events);
+  const { allEvents, isLoading } = useSelector((state) => state.events);
   return (
     <>
-      <div>
-        <Header activeHeading={4} />
-        {/* <EventCard active={true} data={allEvents && allEvents[0]} /> */}
-        <EventCard active={true} />
-        <EventCard active={true} />
-      </div>
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <div>
+          <Header activeHeading={4} />
+          <EventCard active={true} data={allEvents && allEvents[0]} />
+        </div>
+      )}
     </>
   );
 };

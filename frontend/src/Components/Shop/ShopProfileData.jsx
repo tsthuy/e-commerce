@@ -1,27 +1,26 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
-// import { getAllProductsShop } from "../../redux/actions/product";
+import { getAllProductsShop } from "../../redux/actions/product";
 import styles from "../../styles/styles";
 import ProductCard from "../Route/ProductCard/ProductCard";
 // import Ratings from "../Products/Ratings";
 // import { getAllEventsShop } from "../../redux/actions/event";
 import { productData } from "../../static/data";
 const ShopProfileData = ({ isOwner }) => {
-  //   const { products } = useSelector((state) => state.products);
+  const { products } = useSelector((state) => state.products);
   //   const { events } = useSelector((state) => state.events);
-  //   const { id } = useParams();
-  //   const dispatch = useDispatch();
-  const products = productData;
-  //   useEffect(() => {
-  //     dispatch(getAllProductsShop(id));
-  //     dispatch(getAllEventsShop(id));
-  //   }, [dispatch]);
+  const { id } = useParams();
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(getAllProductsShop(id));
+    // dispatch(getAllEventsShop(id));
+  }, [dispatch]);
 
   const [active, setActive] = useState(1);
 
-  const allReviews =
-    products && products.map((product) => product.reviews).flat();
+  // const allReviews =
+  //   products && products.map((product) => product.reviews).flat();
 
   return (
     <div className="w-full">

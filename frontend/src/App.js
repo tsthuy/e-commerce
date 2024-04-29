@@ -21,6 +21,9 @@ import {
   ShopDashBoardPage,
   ShopCreateProduct,
   ShopAllProducts,
+  ShopAllCoupouns,
+  ShopCreateEvents,
+  ShopAllEvents,
 } from "./ShopRoute.js";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -29,12 +32,14 @@ import { loadUser, loadSeller } from "./redux/actions/user.js";
 import SellerProtectedRoute from "./routes/SellerProtectedRoute.jsx";
 import ShopHomePage from "./pages/Shop/ShopHomePage.jsx";
 import { getAllProducts } from "./redux/actions/product.js";
+import { getAllEvents } from "./redux/actions/event.js";
 // import { getAllSellers } from "./redux/actions/seller.js";
 const App = () => {
   useEffect(() => {
     Store.dispatch(loadUser());
     Store.dispatch(loadSeller());
     // Store.dispatch(getAllSellers());
+    Store.dispatch(getAllEvents());
     Store.dispatch(getAllProducts());
   }, []);
   return (
@@ -97,6 +102,30 @@ const App = () => {
             element={
               <SellerProtectedRoute>
                 <ShopAllProducts />
+              </SellerProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard-coupouns"
+            element={
+              <SellerProtectedRoute>
+                <ShopAllCoupouns />
+              </SellerProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard-create-event"
+            element={
+              <SellerProtectedRoute>
+                <ShopCreateEvents />
+              </SellerProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard-events"
+            element={
+              <SellerProtectedRoute>
+                <ShopAllEvents />
               </SellerProtectedRoute>
             }
           />

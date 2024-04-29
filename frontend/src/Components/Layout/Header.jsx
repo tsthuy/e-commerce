@@ -22,10 +22,9 @@ const Header = ({ activeHeading }) => {
   // const { isSeller } = useSelector((state) => state.seller);
   const isSeller = 0;
 
-  const cart = 0;
   console.log(productData);
   const { wishlist } = useSelector((state) => state.wishlist);
-  //   const { cart } = useSelector((state) => state.cart);
+  const { cart } = useSelector((state) => state.cart);
   const { allProducts } = useSelector((state) => state.products);
   console.log(allProducts);
 

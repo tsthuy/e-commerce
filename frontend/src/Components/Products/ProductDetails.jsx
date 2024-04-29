@@ -14,14 +14,14 @@ import {
   addToWishlist,
   removeFromWishlist,
 } from "../../redux/actions/wishlist";
-// import { addTocart } from "../../redux/actions/cart";
+import { addTocart } from "../../redux/actions/cart";
 import { toast } from "react-toastify";
 import Ratings from "./Ratings";
 import axios from "axios";
 
 const ProductDetails = ({ data }) => {
   const { wishlist } = useSelector((state) => state.wishlist);
-  //   const { cart } = useSelector((state) => state.cart);
+  const { cart } = useSelector((state) => state.cart);
   const { user, isAuthenticated } = useSelector((state) => state.user);
   const { products } = useSelector((state) => state.products);
   const [count, setCount] = useState(1);
@@ -58,20 +58,20 @@ const ProductDetails = ({ data }) => {
     dispatch(addToWishlist(data));
   };
 
-  //   const addToCartHandler = (id) => {
-  //     const isItemExists = cart && cart.find((i) => i._id === id);
-  //     if (isItemExists) {
-  //       toast.error("Item already in cart!");
-  //     } else {
-  //       if (data.stock < 1) {
-  //         toast.error("Product stock limited!");
-  //       } else {
-  //         const cartData = { ...data, qty: count };
-  //         dispatch(addTocart(cartData));
-  //         toast.success("Item added to cart successfully!");
-  //       }
-  //     }
-  //   };
+  const addToCartHandler = (id) => {
+    const isItemExists = cart && cart.find((i) => i._id === id);
+    if (isItemExists) {
+      toast.error("Item already in cart!");
+    } else {
+      if (data.stock < 1) {
+        toast.error("Product stock limited!");
+      } else {
+        const cartData = { ...data, qty: count };
+        dispatch(addTocart(cartData));
+        toast.success("Item added to cart successfully!");
+      }
+    }
+  };
 
   //   const totalReviewsLength =
   //     products &&
@@ -200,7 +200,7 @@ const ProductDetails = ({ data }) => {
                 </div>
                 <div
                   className={`${styles.button} !mt-6 !rounded !h-11 flex items-center`}
-                  //   onClick={() => addToCartHandler(data._id)}
+                  onClick={() => addToCartHandler(data._id)}
                 >
                   <span className="text-white flex items-center">
                     Add to cart <AiOutlineShoppingCart className="ml-1" />
@@ -209,7 +209,7 @@ const ProductDetails = ({ data }) => {
                 <div className="flex items-center pt-8">
                   <Link to={`/shop/preview/${data?.shop._id}`}>
                     <img
-                      src={`${data?.shop?.shop_avatar?.url}`}
+                      src={`${data?.shop?.avatar?.url}`}
                       alt=""
                       className="w-[50px] h-[50px] rounded-full mr-2"
                     />
@@ -238,7 +238,7 @@ const ProductDetails = ({ data }) => {
           </div>
           <ProductDetailsInfo
             data={data}
-            // products={products}
+            products={products}
             // totalReviewsLength={totalReviewsLength}
             // averageRating={averageRating}
           />
@@ -343,7 +343,7 @@ const ProductDetailsInfo = ({
             <Link to={`/shop/preview/${data.shop._id}`}>
               <div className="flex items-center">
                 <img
-                  src={`${data?.shop?.shop_avatar?.url}`}
+                  src={`${data?.shop?.avatar?.url}`}
                   className="w-[50px] h-[50px] rounded-full"
                   alt=""
                 />

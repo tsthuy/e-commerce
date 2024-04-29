@@ -5,37 +5,37 @@ import { server } from "../../server";
 import styles from "../../styles/styles";
 import Loader from "../Layout/Loader";
 import { useDispatch, useSelector } from "react-redux";
-// import { getAllProductsShop } from "../../redux/actions/product";
+import { getAllProductsShop } from "../../redux/actions/product";
 
 const ShopInfo = ({ isOwner }) => {
   const [data, setData] = useState({});
-  //   const { products } = useSelector((state) => state.products);
+  const { products } = useSelector((state) => state.products);
   const { seller } = useSelector((state) => state.seller);
   const [isLoading, setIsLoading] = useState(false);
-  //   const { id } = useParams();
-  //   const dispatch = useDispatch();
+  const { id } = useParams();
+  const dispatch = useDispatch();
 
-  //   useEffect(() => {
-  //     dispatch(getAllProductsShop(id));
-  //     setIsLoading(true);
-  //     axios
-  //       .get(`${server}/shop/get-shop-info/${id}`)
-  //       .then((res) => {
-  //         setData(res.data.shop);
-  //         setIsLoading(false);
-  //       })
-  //       .catch((error) => {
-  //         console.log(error);
-  //         setIsLoading(false);
-  //       });
-  //   }, []);
+  useEffect(() => {
+    dispatch(getAllProductsShop(id));
+    setIsLoading(true);
+    axios
+      .get(`${server}/shop/get-shop-info/${id}`)
+      .then((res) => {
+        setData(res.data.shop);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.log(error);
+        setIsLoading(false);
+      });
+  }, []);
 
-  //   const logoutHandler = async () => {
-  //     axios.get(`${server}/shop/logout`, {
-  //       withCredentials: true,
-  //     });
-  //     window.location.reload();
-  //   };
+  const logoutHandler = async () => {
+    axios.get(`${server}/shop/logout`, {
+      withCredentials: true,
+    });
+    window.location.reload();
+  };
 
   //   const totalReviewsLength =
   //     products &&
@@ -80,8 +80,7 @@ const ShopInfo = ({ isOwner }) => {
           </div>
           <div className="p-3">
             <h5 className="font-[600]">Total Products</h5>
-            {/* <h4 className="text-[#000000a6]">{products && products.length}</h4> */}
-            <h4 className="text-[#000000a6]">10</h4>
+            <h4 className="text-[#000000a6]">{products && products.length}</h4>
           </div>
           <div className="p-3">
             <h5 className="font-[600]">Shop Ratings</h5>
@@ -104,7 +103,7 @@ const ShopInfo = ({ isOwner }) => {
               </Link>
               <div
                 className={`${styles.button} !w-full !h-[42px] !rounded-[5px]`}
-                // onClick={logoutHandler}
+                onClick={logoutHandler}
               >
                 <span className="text-white">Log Out</span>
               </div>

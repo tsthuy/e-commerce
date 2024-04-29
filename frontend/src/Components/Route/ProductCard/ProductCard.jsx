@@ -16,14 +16,13 @@ import {
   removeFromWishlist,
 } from "../../../redux/actions/wishlist";
 import { useEffect } from "react";
-// import { addTocart } from "../../../redux/actions/cart";
+import { addTocart } from "../../../redux/actions/cart";
 import { toast } from "react-toastify";
 import Ratings from "../../Products/Ratings";
 
 const ProductCard = ({ data, isEvent }) => {
   const { wishlist } = useSelector((state) => state.wishlist);
-  //   const { cart } = useSelector((state) => state.cart);
-  const cart = 0;
+  const { cart } = useSelector((state) => state.cart);
 
   const [click, setClick] = useState(false);
   const [open, setOpen] = useState(false);
@@ -47,20 +46,20 @@ const ProductCard = ({ data, isEvent }) => {
     dispatch(addToWishlist(data));
   };
 
-  // const addToCartHandler = (id) => {
-  //   const isItemExists = cart && cart.find((i) => i._id === id);
-  //   if (isItemExists) {
-  //     toast.error("Item already in cart!");
-  //   } else {
-  //     if (data.stock < 1) {
-  //       toast.error("Product stock limited!");
-  //     } else {
-  //       const cartData = { ...data, qty: 1 };
-  //       dispatch(addTocart(cartData));
-  //       toast.success("Item added to cart successfully!");
-  //     }
-  //   }
-  // };
+  const addToCartHandler = (id) => {
+    const isItemExists = cart && cart.find((i) => i._id === id);
+    if (isItemExists) {
+      toast.error("Item already in cart!");
+    } else {
+      if (data.stock < 1) {
+        toast.error("Product stock limited!");
+      } else {
+        const cartData = { ...data, qty: 1 };
+        dispatch(addTocart(cartData));
+        toast.success("Item added to cart successfully!");
+      }
+    }
+  };
 
   return (
     <>
@@ -144,7 +143,7 @@ const ProductCard = ({ data, isEvent }) => {
           <AiOutlineShoppingCart
             size={25}
             className="cursor-pointer absolute right-2 top-24"
-            // onClick={() => addToCartHandler(data._id)}
+            onClick={() => addToCartHandler(data._id)}
             color="#444"
             title="Add to cart"
           />

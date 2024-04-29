@@ -32,6 +32,7 @@ const userSlice = createSlice({
     updateUserInfoSuccess: (state, action) => {
       state.loading = false;
       state.user = action.payload;
+      state.successMessage = "Updated successfully!!!";
     },
     updateUserInfoFailed: (state, action) => {
       state.loading = false;

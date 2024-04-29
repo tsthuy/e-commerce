@@ -5,26 +5,25 @@ import { HiOutlineMinus, HiPlus } from "react-icons/hi";
 import styles from "../../styles/styles";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-// import { addTocart, removeFromCart } from "../../redux/actions/cart";
+import { addTocart, removeFromCart } from "../../redux/actions/cart";
 import { toast } from "react-toastify";
 import { productData } from "../../static/data";
 
 const Cart = ({ setOpenCart }) => {
-  //   const { cart } = useSelector((state) => state.cart);
+  const { cart } = useSelector((state) => state.cart);
   const dispatch = useDispatch();
-  const cart = productData;
-  //   const removeFromCartHandler = (data) => {
-  //     dispatch(removeFromCart(data));
-  //   };
+  const removeFromCartHandler = (data) => {
+    dispatch(removeFromCart(data));
+  };
 
   const totalPrice = cart.reduce(
     (acc, item) => acc + item.qty * item.discountPrice,
     0
   );
 
-  //   const quantityChangeHandler = (data) => {
-  //     dispatch(addTocart(data));
-  //   };
+  const quantityChangeHandler = (data) => {
+    dispatch(addTocart(data));
+  };
 
   return (
     <div className="fixed top-0 left-0 w-full bg-[#0000004b] h-screen z-10">
@@ -66,8 +65,8 @@ const Cart = ({ setOpenCart }) => {
                     <CartSingle
                       key={index}
                       data={i}
-                      //   quantityChangeHandler={quantityChangeHandler}
-                      //   removeFromCartHandler={removeFromCartHandler}
+                      quantityChangeHandler={quantityChangeHandler}
+                      removeFromCartHandler={removeFromCartHandler}
                     />
                   ))}
               </div>
@@ -132,15 +131,14 @@ const CartSingle = ({ data, quantityChangeHandler, removeFromCartHandler }) => {
         </div>
         <img
           //   src={`${data?.images[0]?.url}`}
-          src={`${data?.image_Url[0].url}`}
+          src={`${data?.images[0].url}`}
           alt=""
           className="w-[130px] h-min ml-2 mr-2 rounded-[5px]"
         />
         <div className="pl-[5px]">
           <h1>{data.name}</h1>
           <h4 className="font-[400] text-[15px] text-[#00000082]">
-            {/* ${data.discountPrice} * {value} */}${data.discount_price} *{" "}
-            {value}
+            ${data.discountPrice} * {value}
           </h4>
           <h4 className="font-[600] text-[17px] pt-[3px] text-[#d02222] font-Roboto">
             US${totalPrice}
