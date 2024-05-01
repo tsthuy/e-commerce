@@ -19,8 +19,7 @@ import { RxCross1 } from "react-icons/rx";
 
 const Header = ({ activeHeading }) => {
   const { isAuthenticated, user } = useSelector((state) => state.user);
-  // const { isSeller } = useSelector((state) => state.seller);
-  const isSeller = 0;
+  const { isSeller } = useSelector((state) => state.seller);
 
   console.log(productData);
   const { wishlist } = useSelector((state) => state.wishlist);

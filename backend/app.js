@@ -30,11 +30,13 @@ const shop = require("./controller/shop");
 const product = require("./controller/product");
 const coupon = require("./controller/coupounCode");
 const event = require("./controller/event");
+const order = require("./controller/order");
 app.use("/api/v2/user", user);
 app.use("/api/v2/shop", shop);
 app.use("/api/v2/product", product);
 app.use("/api/v2/coupon", coupon);
 app.use("/api/v2/event", event);
+app.use("/api/v2/order", order);
 // handler error
 app.use(ErrorHandler);
 module.exports = app;
