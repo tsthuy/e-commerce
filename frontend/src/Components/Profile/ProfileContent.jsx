@@ -24,8 +24,6 @@ import { Country, State } from "country-state-city";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { clearErrors, clearMessages } from "../../redux/reducers/user";
-import order from "../../redux/reducers/order";
-// import { getAllOrdersOfUser } from "../../redux/actions/order";
 
 const ProfileContent = ({ active }) => {
   const { user, error, successMessage } = useSelector((state) => state.user);

@@ -32,7 +32,7 @@ const AllEvents = () => {
       key: "preview",
       width: 100,
       render: (_, record) => (
-        <Link to={`/product/${record.name}`}>
+        <Link to={`/product/${record.id}?isEvent=true`}>
           <Button icon={<AiOutlineEye />} />
         </Link>
       ),

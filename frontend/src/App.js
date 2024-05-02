@@ -31,6 +31,7 @@ import {
   ShopAllOrders,
   ShopOrderDetails,
   ShopPreviewPage,
+  ShopSettingsPage,
 } from "./ShopRoute.js";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -189,7 +190,16 @@ const App = () => {
               </SellerProtectedRoute>
             }
           />
+          <Route
+            path="/settings"
+            element={
+              <SellerProtectedRoute>
+                <ShopSettingsPage />
+              </SellerProtectedRoute>
+            }
+          />
         </Routes>
+
         <ToastContainer
           position="bottom-center"
           autoClose={5000}

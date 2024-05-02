@@ -22,7 +22,7 @@ const AllCoupons = () => {
   const [value, setValue] = useState(null);
   const { seller } = useSelector((state) => state.seller);
   const { products } = useSelector((state) => state.products);
-
+  console.log(products);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -124,67 +124,91 @@ const AllCoupons = () => {
                 <h5 className="text-[30px] font-Poppins text-center">
                   Create Coupon code
                 </h5>
-                <Form onFinish={handleSubmit} layout="vertical">
-                  <Form.Item
-                    label="Name"
-                    name="name"
-                    required
-                    rules={[{ required: true, message: "Please input name!" }]}
-                  >
-                    <Input
+                {/* create coupoun code */}
+                <form onSubmit={handleSubmit} aria-required={true}>
+                  <br />
+                  <div>
+                    <label className="pb-2">
+                      Name <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="name"
+                      required
                       value={name}
+                      className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                       onChange={(e) => setName(e.target.value)}
                       placeholder="Enter your coupon code name..."
                     />
-                  </Form.Item>
-                  <Form.Item
-                    label="Discount Percentage"
-                    name="value"
-                    required
-                    rules={[{ required: true, message: "Please input value!" }]}
-                  >
-                    <Input
-                      type="number"
+                  </div>
+                  <br />
+                  <div>
+                    <label className="pb-2">
+                      Discount Percentenge{" "}
+                      <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="value"
                       value={value}
+                      required
+                      className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                       onChange={(e) => setValue(e.target.value)}
                       placeholder="Enter your coupon code value..."
                     />
-                  </Form.Item>
-                  <Form.Item label="Min Amount" name="minAmount">
-                    <Input
+                  </div>
+                  <br />
+                  <div>
+                    <label className="pb-2">Min Amount</label>
+                    <input
                       type="number"
+                      name="value"
                       value={minAmount}
+                      className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                       onChange={(e) => setMinAmout(e.target.value)}
                       placeholder="Enter your coupon code min amount..."
                     />
-                  </Form.Item>
-                  <Form.Item label="Max Amount" name="maxAmount">
-                    <Input
+                  </div>
+                  <br />
+                  <div>
+                    <label className="pb-2">Max Amount</label>
+                    <input
                       type="number"
+                      name="value"
                       value={maxAmount}
+                      className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                       onChange={(e) => setMaxAmount(e.target.value)}
                       placeholder="Enter your coupon code max amount..."
                     />
-                  </Form.Item>
-                  <Form.Item label="Selected Product" name="selectedProducts">
-                    <Select
+                  </div>
+                  <br />
+                  <div>
+                    <label className="pb-2">Selected Product</label>
+                    <select
+                      className="w-full mt-2 border h-[35px] rounded-[5px]"
                       value={selectedProducts}
-                      onChange={(value) => setSelectedProducts(value)}
-                      placeholder="Choose a selected product"
+                      onChange={(e) => setSelectedProducts(e.target.value)}
                     >
-                      {products.map((product) => (
-                        <Option key={product.name} value={product.name}>
-                          {product.name}
-                        </Option>
-                      ))}
-                    </Select>
-                  </Form.Item>
-                  <Form.Item>
-                    <Button type="primary" htmlType="submit">
-                      Create
-                    </Button>
-                  </Form.Item>
-                </Form>
+                      <option value="Choose your selected products">
+                        Choose a selected product
+                      </option>
+                      {products &&
+                        products.map((i) => (
+                          <option value={i.name} key={i.name}>
+                            {i.name}
+                          </option>
+                        ))}
+                    </select>
+                  </div>
+                  <br />
+                  <div>
+                    <input
+                      type="submit"
+                      value="Create"
+                      className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    />
+                  </div>
+                </form>
               </div>
             </div>
           )}

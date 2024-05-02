@@ -9,6 +9,7 @@ import {
   updateUserAddressRequest,
   updateUserAddressSuccess,
   updateUserAddressFailed,
+  deleteUserAddressSuccess,
 } from "../reducers/user";
 import {
   LoadSellerRequest,
@@ -114,13 +115,12 @@ export const deleteUserAddress = (id) => async (dispatch) => {
       { withCredentials: true }
     );
 
-    dispatch({
-      type: "deleteUserAddressSuccess",
-      payload: {
+    dispatch(
+      deleteUserAddressSuccess({
         successMessage: "User deleted successfully!",
         user: data.user,
-      },
-    });
+      })
+    );
   } catch (error) {
     dispatch({
       type: "deleteUserAddressFailed",
