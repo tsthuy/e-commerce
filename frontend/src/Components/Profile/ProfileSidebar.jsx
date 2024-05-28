@@ -58,7 +58,7 @@ const ProfileSidebar = ({ setActive, active }) => {
           Orders
         </span>
       </div>
-      {/* <div
+      <div
         className="flex items-center cursor-pointer w-full mb-8"
         onClick={() => setActive(3)}
       >
@@ -70,9 +70,9 @@ const ProfileSidebar = ({ setActive, active }) => {
         >
           Refunds
         </span>
-      </div> */}
+      </div>
 
-      {/* <div
+      <div
         className="flex items-center cursor-pointer w-full mb-8"
         onClick={() => setActive(4) || navigate("/inbox")}
       >
@@ -84,9 +84,9 @@ const ProfileSidebar = ({ setActive, active }) => {
         >
           Inbox
         </span>
-      </div> */}
+      </div>
 
-      {/* <div
+      <div
         className="flex items-center cursor-pointer w-full mb-8"
         onClick={() => setActive(5)}
       >
@@ -98,7 +98,7 @@ const ProfileSidebar = ({ setActive, active }) => {
         >
           Track Order
         </span>
-      </div> */}
+      </div>
 
       <div
         className="flex items-center cursor-pointer w-full mb-8"
@@ -136,7 +136,7 @@ const ProfileSidebar = ({ setActive, active }) => {
           >
             <MdOutlineAdminPanelSettings
               size={20}
-              color={active === 7 ? "red" : ""}
+              color={active === 8 ? "red" : ""}
             />
             <span
               className={`pl-3 ${

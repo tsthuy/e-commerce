@@ -14,9 +14,9 @@ app.use(
   })
 );
 
-app.use(express.json());
+app.use(express.json({ limit: "50mb" }));
 app.use(cookieParser());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
 
 if (process.env.NODE_ENV !== "PRODUCTION") {
   require("dotenv").config({
@@ -31,12 +31,17 @@ const product = require("./controller/product");
 const coupon = require("./controller/coupounCode");
 const event = require("./controller/event");
 const order = require("./controller/order");
+const withdraw = require("./controller/withdraw");
+const payment = require("./controller/payment");
+
 app.use("/api/v2/user", user);
 app.use("/api/v2/shop", shop);
 app.use("/api/v2/product", product);
 app.use("/api/v2/coupon", coupon);
 app.use("/api/v2/event", event);
 app.use("/api/v2/order", order);
+app.use("/api/v2/withdraw", withdraw);
+app.use("/api/v2/payment", payment);
 // handler error
 app.use(ErrorHandler);
 module.exports = app;

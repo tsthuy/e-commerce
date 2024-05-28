@@ -85,7 +85,6 @@ router.get(
   })
 );
 
-// delete event of a shop
 router.delete(
   "/delete-shop-event/:id",
   catchAsyncErrors(async (req, res, next) => {
@@ -93,24 +92,28 @@ router.delete(
       const event = await Event.findById(req.params.id);
 
       if (!event) {
-        return next(new ErrorHandler("Product is not found with this id", 404));
+        return next(new ErrorHandler("Event not found with this id", 404));
       }
 
-      for (let i = 0; 1 < event.images.length; i++) {
-        const result = await cloudinary.v2.uploader.destroy(
-          event.images[i].public_id
-        );
+      // Check if images array exists and is not empty
+      if (event.images && event.images.length > 0) {
+        for (let i = 0; i < event.images.length; i++) {
+          const result = await cloudinary.v2.uploader.destroy(
+            event.images[i].public_id
+          );
+          // Handle result (e.g., log success or error)
+        }
       }
 
       await event.deleteOne();
 
       res.status(201).json({
         success: true,
-        message: "Event Deleted successfully!",
+        message: "Event deleted successfully!",
       });
     } catch (error) {
-      console.log(error);
-      return next(new ErrorHandler(error, 400));
+      console.error(error);
+      return next(new ErrorHandler(error.message, 400));
     }
   })
 );

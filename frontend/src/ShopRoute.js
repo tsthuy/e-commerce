@@ -8,6 +8,8 @@ import ShopAllOrders from "./pages/Shop/ShopAllOrders.jsx";
 import ShopOrderDetails from "./pages/Shop/ShopOrderDetails.jsx";
 import ShopPreviewPage from "./pages/Shop/ShopPreviewPage.jsx";
 import ShopSettingsPage from "./pages/Shop/ShopSettingsPage.jsx";
+import ShopWithDrawMoneyPage from "./pages/Shop/ShopWithDrawMoneyPage.jsx";
+import ShopAllRefunds from "./pages/Shop/ShopAllRefunds.jsx";
 export {
   ShopDashBoardPage,
   ShopCreateProduct,
@@ -17,6 +19,8 @@ export {
   ShopAllEvents,
   ShopAllOrders,
   ShopOrderDetails,
+  ShopWithDrawMoneyPage,
   ShopPreviewPage,
   ShopSettingsPage,
+  ShopAllRefunds,
 };

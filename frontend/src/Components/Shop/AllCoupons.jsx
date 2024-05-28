@@ -1,4 +1,4 @@
-import { Button, Form, Input, Select, Space, Table } from "antd";
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { AiOutlineDelete } from "react-icons/ai";
 import { RxCross1 } from "react-icons/rx";
@@ -7,9 +7,7 @@ import styles from "../../styles/styles";
 import Loader from "../Layout/Loader";
 import { server } from "../../server";
 import { toast } from "react-toastify";
-import axios from "axios";
-
-const { Option } = Select;
+import { Button, Table } from "antd";
 
 const AllCoupons = () => {
   const [open, setOpen] = useState(false);
@@ -18,11 +16,11 @@ const AllCoupons = () => {
   const [coupouns, setCoupouns] = useState([]);
   const [minAmount, setMinAmout] = useState(null);
   const [maxAmount, setMaxAmount] = useState(null);
-  const [selectedProducts, setSelectedProducts] = useState(null);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const [value, setValue] = useState(null);
   const { seller } = useSelector((state) => state.seller);
   const { products } = useSelector((state) => state.products);
-  console.log(products);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -39,14 +37,14 @@ const AllCoupons = () => {
         setIsLoading(false);
       });
   }, [dispatch]);
-
+  console.log(coupouns);
   const handleDelete = async (id) => {
     axios
       .delete(`${server}/coupon/delete-coupon/${id}`, { withCredentials: true })
       .then((res) => {
         toast.success("Coupon code deleted succesfully!");
-        setCoupouns(coupouns.filter((coupon) => coupon._id !== id));
       });
+    window.location.reload();
   };
 
   const handleSubmit = async (e) => {
@@ -59,7 +57,7 @@ const AllCoupons = () => {
           name,
           minAmount,
           maxAmount,
-          selectedProducts,
+          selectedProduct,
           value,
           shopId: seller._id,
         },
@@ -76,12 +74,29 @@ const AllCoupons = () => {
   };
 
   const columns = [
-    { title: "Id", dataIndex: "id" },
-    { title: "Coupon Code", dataIndex: "name" },
-    { title: "Value", dataIndex: "value" },
+    {
+      title: "Id",
+      dataIndex: "id",
+      key: "id",
+      width: 150,
+    },
+    {
+      title: "Coupon Code",
+      dataIndex: "name",
+      key: "name",
+      width: 180,
+    },
+    {
+      title: "Value",
+      dataIndex: "price",
+      key: "price",
+      width: 100,
+    },
     {
       title: "",
-      render: (_, record) => (
+      key: "action",
+      width: 120,
+      render: (text, record) => (
         <Button onClick={() => handleDelete(record.id)}>
           <AiOutlineDelete size={20} />
         </Button>
@@ -89,12 +104,17 @@ const AllCoupons = () => {
     },
   ];
 
-  const data = coupouns.map((coupon) => ({
-    key: coupon._id,
-    id: coupon._id,
-    name: coupon.name,
-    value: `${coupon.value} %`,
-  }));
+  const row = [];
+
+  coupouns &&
+    coupouns.forEach((item) => {
+      row.push({
+        id: item._id,
+        name: item.name,
+        price: item.value + " %",
+        sold: 10,
+      });
+    });
 
   return (
     <>
@@ -110,7 +130,12 @@ const AllCoupons = () => {
               <span className="text-white">Create Coupon Code</span>
             </div>
           </div>
-          <Table columns={columns} dataSource={data} />
+          <Table
+            dataSource={row} // Thay thế bằng nguồn dữ liệu thực tế của bạn
+            columns={columns}
+            pagination={{ pageSize: 10 }} // Đặt kích thước trang mong muốn
+            rowKey="id" // Đảm bảo bạn có một khóa duy nhất cho mỗi hàng
+          />
           {open && (
             <div className="fixed top-0 left-0 w-full h-screen bg-[#00000062] z-[20000] flex items-center justify-center">
               <div className="w-[90%] 800px:w-[40%] h-[80vh] bg-white rounded-md shadow p-4">
@@ -186,8 +211,11 @@ const AllCoupons = () => {
                     <label className="pb-2">Selected Product</label>
                     <select
                       className="w-full mt-2 border h-[35px] rounded-[5px]"
-                      value={selectedProducts}
-                      onChange={(e) => setSelectedProducts(e.target.value)}
+                      value={selectedProduct}
+                      onChange={(e) =>
+                        setSelectedProduct(e.target.value) ||
+                        console.log(selectedProduct)
+                      }
                     >
                       <option value="Choose your selected products">
                         Choose a selected product

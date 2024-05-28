@@ -10,7 +10,6 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { server } from "../../server";
 import styles from "../../styles/styles";
-import { DataGrid } from "@material-ui/data-grid";
 
 import { MdTrackChanges } from "react-icons/md";
 import { RxCross1 } from "react-icons/rx";
@@ -31,11 +30,9 @@ const ProfileContent = ({ active }) => {
   const [email, setEmail] = useState(user && user.email);
   const [phoneNumber, setPhoneNumber] = useState(user && user.phoneNumber);
   const [password, setPassword] = useState("");
-  console.log(password);
 
   const [avatar, setAvatar] = useState(null);
   const dispatch = useDispatch();
-  console.log(password);
 
   useEffect(() => {
     if (error) {
@@ -79,7 +76,6 @@ const ProfileContent = ({ active }) => {
 
     reader.readAsDataURL(e.target.files[0]);
   };
-  console.log(password);
   return (
     <div className="w-full">
       {/* profile */}
@@ -220,7 +216,9 @@ const AllOrders = () => {
       dataIndex: "status",
       key: "status",
       render: (text) => (
-        <span className={text === "Delivered" ? "greenColor" : "redColor"}>
+        <span
+          className={text === "Delivered" ? "text-green-500" : "text-red-700"}
+        >
           {text}
         </span>
       ),
@@ -263,87 +261,79 @@ const AllOrders = () => {
 
 const AllRefundOrders = () => {
   const { user } = useSelector((state) => state.user);
-  // const { orders } = useSelector((state) => state.order);
+  const { orders } = useSelector((state) => state.order);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    // dispatch(getAllOrdersOfUser(user._id));
+    dispatch(getAllOrdersOfUser(user._id));
   }, []);
 
-  // const eligibleOrders =
-  //   orders && orders.filter((item) => item.status === "Processing refund");
+  const eligibleOrders =
+    orders && orders.filter((item) => item.status === "Processing refund");
 
   const columns = [
-    { field: "id", headerName: "Order ID", minWidth: 150, flex: 0.7 },
-
     {
-      field: "status",
-      headerName: "Status",
-      minWidth: 130,
-      flex: 0.7,
-      cellClassName: (params) => {
-        return params.getValue(params.id, "status") === "Delivered"
-          ? "greenColor"
-          : "redColor";
-      },
+      title: "Order ID",
+      dataIndex: "id",
+      key: "id",
+      width: 150,
     },
     {
-      field: "itemsQty",
-      headerName: "Items Qty",
-      type: "number",
-      minWidth: 130,
-      flex: 0.7,
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      width: 130,
+      render: (status) => (
+        <span
+          className={status === "Delivered" ? "text-green-500" : "text-red-700"}
+        >
+          {status}
+        </span>
+      ),
     },
-
     {
-      field: "total",
-      headerName: "Total",
-      type: "number",
-      minWidth: 130,
-      flex: 0.8,
+      title: "Items Qty",
+      dataIndex: "itemsQty",
+      key: "itemsQty",
+      width: 130,
     },
-
     {
-      field: " ",
-      flex: 1,
-      minWidth: 150,
-      headerName: "",
-      type: "number",
-      sortable: false,
-      renderCell: (params) => {
-        return (
-          <>
-            <Link to={`/user/order/${params.id}`}>
-              <Button>
-                <AiOutlineArrowRight size={20} />
-              </Button>
-            </Link>
-          </>
-        );
-      },
+      title: "Total",
+      dataIndex: "total",
+      key: "total",
+      width: 130,
+    },
+    {
+      title: "",
+      key: "action",
+      width: 150,
+      render: (text, record) => (
+        <Link to={`/user/order/${record.id}`}>
+          <Button icon={<AiOutlineArrowRight />} />
+        </Link>
+      ),
     },
   ];
 
   const row = [];
 
-  // eligibleOrders &&
-  //   eligibleOrders.forEach((item) => {
-  //     row.push({
-  //       id: item._id,
-  //       itemsQty: item.cart.length,
-  //       total: "US$ " + item.totalPrice,
-  //       status: item.status,
-  //     });
-  //   });
+  eligibleOrders &&
+    eligibleOrders.forEach((item) => {
+      row.push({
+        id: item._id,
+        itemsQty: item.cart.length,
+        total: "US$ " + item.totalPrice,
+        status: item.status,
+      });
+    });
 
   return (
     <div className="pl-8 pt-1">
-      <DataGrid
-        rows={row}
+      <Table
+        dataSource={row} // Replace with your data source
         columns={columns}
-        pageSize={10}
-        autoHeight
-        disableSelectionOnClick
+        pagination={{ pageSize: 10 }} // Set the desired page size
+        rowKey="id" // Ensure you have a unique key for each row
       />
     </div>
   );
@@ -351,84 +341,76 @@ const AllRefundOrders = () => {
 
 const TrackOrder = () => {
   const { user } = useSelector((state) => state.user);
-  // const { orders } = useSelector((state) => state.order);
+  const { orders } = useSelector((state) => state.order);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    // dispatch(getAllOrdersOfUser(user._id));
+    dispatch(getAllOrdersOfUser(user._id));
   }, []);
 
   const columns = [
-    { field: "id", headerName: "Order ID", minWidth: 150, flex: 0.7 },
-
     {
-      field: "status",
-      headerName: "Status",
-      minWidth: 130,
-      flex: 0.7,
-      cellClassName: (params) => {
-        return params.getValue(params.id, "status") === "Delivered"
-          ? "greenColor"
-          : "redColor";
-      },
+      title: "Order ID",
+      dataIndex: "id",
+      key: "id",
+      width: 150,
     },
     {
-      field: "itemsQty",
-      headerName: "Items Qty",
-      type: "number",
-      minWidth: 130,
-      flex: 0.7,
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      width: 130,
+      render: (status) => (
+        <span
+          className={status === "Delivered" ? "text-green-500" : "text-red-700"}
+        >
+          {status}
+        </span>
+      ),
     },
-
     {
-      field: "total",
-      headerName: "Total",
-      type: "number",
-      minWidth: 130,
-      flex: 0.8,
+      title: "Items Qty",
+      dataIndex: "itemsQty",
+      key: "itemsQty",
+      width: 130,
     },
-
     {
-      field: " ",
-      flex: 1,
-      minWidth: 150,
-      headerName: "",
-      type: "number",
-      sortable: false,
-      renderCell: (params) => {
-        return (
-          <>
-            <Link to={`/user/track/order/${params.id}`}>
-              <Button>
-                <MdTrackChanges size={20} />
-              </Button>
-            </Link>
-          </>
-        );
-      },
+      title: "Total",
+      dataIndex: "total",
+      key: "total",
+      width: 130,
+    },
+    {
+      title: "",
+      key: "action",
+      width: 150,
+      render: (text, record) => (
+        <Link to={`/user/track/order/${record.id}`}>
+          <Button icon={<MdTrackChanges size={20} />} />
+        </Link>
+      ),
     },
   ];
 
   const row = [];
 
-  // orders &&
-  //   orders.forEach((item) => {
-  //     row.push({
-  //       id: item._id,
-  //       itemsQty: item.cart.length,
-  //       total: "US$ " + item.totalPrice,
-  //       status: item.status,
-  //     });
-  //   });
+  orders &&
+    orders.forEach((item) => {
+      row.push({
+        id: item._id,
+        itemsQty: item.cart.length,
+        total: "US$ " + item.totalPrice,
+        status: item.status,
+      });
+    });
 
   return (
     <div className="pl-8 pt-1">
-      <DataGrid
-        rows={row}
+      <Table
+        dataSource={row} // Replace with your data source
         columns={columns}
-        pageSize={10}
-        disableSelectionOnClick
-        autoHeight
+        pagination={{ pageSize: 10 }} // Set the desired page size
+        rowKey="id" // Ensure you have a unique key for each row
       />
     </div>
   );

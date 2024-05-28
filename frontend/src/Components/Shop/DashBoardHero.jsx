@@ -27,7 +27,9 @@ const DashBoardHero = () => {
       dataIndex: "status",
       key: "status",
       render: (text, record) => (
-        <span className={text === "Delivered" ? "greenColor" : "redColor"}>
+        <span
+          className={text === "Delivered" ? "text-green-500" : "text-red-700"}
+        >
           {text}
         </span>
       ),
@@ -71,11 +73,9 @@ const DashBoardHero = () => {
               </h3>
             </div>
             <Statistic title="Balance" value={availableBalance} precision={2} />
-            {/* <Link className="hidden" to="/dashboard-withdraw-money">
+            <Link className="" to="/dashboard-withdraw-money">
               <h5 className="pt-4 text-[#077f9c]">Withdraw Money</h5>
-            </Link> */}
-            <br />
-            <br />
+            </Link>
           </div>
         </Col>
         <Col span={8}>

@@ -23,7 +23,9 @@ const AllOrders = () => {
       key: "status",
       width: 130,
       render: (text) => (
-        <span className={text === "Delivered" ? "greenColor" : "redColor"}>
+        <span
+          className={text === "Delivered" ? "text-green-500" : "text-red-700"}
+        >
           {text}
         </span>
       ),

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import {
@@ -20,6 +20,7 @@ import {
   PaymentPage,
   OrderSuccessPage,
   OrderDetailsPage,
+  TrackOrderPage,
 } from "./Routers.js";
 import {
   ShopDashBoardPage,
@@ -30,9 +31,12 @@ import {
   ShopAllEvents,
   ShopAllOrders,
   ShopOrderDetails,
+  ShopWithDrawMoneyPage,
   ShopPreviewPage,
   ShopSettingsPage,
+  ShopAllRefunds,
 } from "./ShopRoute.js";
+import ProtectedAdminRoute from "./routes/ProtectedAdminRoute.jsx";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Store from "./redux/store.js";
@@ -41,27 +45,58 @@ import SellerProtectedRoute from "./routes/SellerProtectedRoute.jsx";
 import ShopHomePage from "./pages/Shop/ShopHomePage.jsx";
 import { getAllProducts } from "./redux/actions/product.js";
 import { getAllEvents } from "./redux/actions/event.js";
-// import { getAllSellers } from "./redux/actions/seller.js";
+import { getAllSellers } from "./redux/actions/seller.js";
+import {
+  AdminDashboardUsers,
+  AdminDashboardSellers,
+  AdminDashboardOrders,
+  AdminDashboardPage,
+  AdminDashboardProducts,
+  AdminDashboardEvents,
+  AdminDashboardWithdraw,
+} from "./AdminRoutes.js";
+
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+import axios from "axios";
+import { server } from "./server.js";
 const App = () => {
+  const [stripeApiKey, setStripeApiKey] = useState("");
+  async function getStripeApiKey() {
+    const { data } = await axios.get(`${server}/payment/stripeapikey`);
+    setStripeApiKey(data.stripeApiKey);
+  }
   useEffect(() => {
     Store.dispatch(loadUser());
     Store.dispatch(loadSeller());
-    // Store.dispatch(getAllSellers());
+    Store.dispatch(getAllSellers());
     Store.dispatch(getAllEvents());
     Store.dispatch(getAllProducts());
+    getStripeApiKey();
   }, []);
+  console.log(stripeApiKey);
   return (
     <>
       <BrowserRouter>
+        {1 && (
+          <Elements
+            stripe={loadStripe(
+              "pk_test_51PJWgSRrmG8ADze7c73aqxkoqur4A17yXd3Akxv8dfAj79Ono2NRpPFdJyDgF3gjD0H0R1lo0QqLrGS7hu8Oj1G900L6IIQJqI"
+            )}
+          >
+            <Routes>
+              <Route
+                path="/payment"
+                element={
+                  <ProtectedRoute>
+                    <PaymentPage />
+                  </ProtectedRoute>
+                }
+              />
+            </Routes>
+          </Elements>
+        )}
         <Routes>
-          <Route
-            path="/payment"
-            element={
-              <ProtectedRoute>
-                <PaymentPage />
-              </ProtectedRoute>
-            }
-          />
           <Route
             path="/user/order/:id"
             element={
@@ -76,6 +111,14 @@ const App = () => {
             element={
               <ProtectedRoute>
                 <OrderDetailsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/user/track/order/:id"
+            element={
+              <ProtectedRoute>
+                <TrackOrderPage />
               </ProtectedRoute>
             }
           />
@@ -191,11 +234,84 @@ const App = () => {
             }
           />
           <Route
+            path="/dashboard-withdraw-money"
+            element={
+              <SellerProtectedRoute>
+                <ShopWithDrawMoneyPage />
+              </SellerProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard-refunds"
+            element={
+              <SellerProtectedRoute>
+                <ShopAllRefunds />
+              </SellerProtectedRoute>
+            }
+          />
+          <Route
             path="/settings"
             element={
               <SellerProtectedRoute>
                 <ShopSettingsPage />
               </SellerProtectedRoute>
+            }
+          />
+          {/* Admin Routes */}
+          <Route
+            path="/admin/dashboard"
+            element={
+              <ProtectedAdminRoute>
+                <AdminDashboardPage />
+              </ProtectedAdminRoute>
+            }
+          />
+          <Route
+            path="/admin-users"
+            element={
+              <ProtectedAdminRoute>
+                <AdminDashboardUsers />
+              </ProtectedAdminRoute>
+            }
+          />
+          <Route
+            path="/admin-sellers"
+            element={
+              <ProtectedAdminRoute>
+                <AdminDashboardSellers />
+              </ProtectedAdminRoute>
+            }
+          />
+          <Route
+            path="/admin-orders"
+            element={
+              <ProtectedAdminRoute>
+                <AdminDashboardOrders />
+              </ProtectedAdminRoute>
+            }
+          />
+          <Route
+            path="/admin-products"
+            element={
+              <ProtectedAdminRoute>
+                <AdminDashboardProducts />
+              </ProtectedAdminRoute>
+            }
+          />
+          <Route
+            path="/admin-events"
+            element={
+              <ProtectedAdminRoute>
+                <AdminDashboardEvents />
+              </ProtectedAdminRoute>
+            }
+          />
+          <Route
+            path="/admin-withdraw-request"
+            element={
+              <ProtectedAdminRoute>
+                <AdminDashboardWithdraw />
+              </ProtectedAdminRoute>
             }
           />
         </Routes>

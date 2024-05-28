@@ -74,43 +74,43 @@ const ProductDetails = ({ data }) => {
     }
   };
 
-  //   const totalReviewsLength =
-  //     products &&
-  //     products.reduce((acc, product) => acc + product.reviews.length, 0);
+  const totalReviewsLength =
+    products &&
+    products.reduce((acc, product) => acc + product.reviews.length, 0);
 
-  //   const totalRatings =
-  //     products &&
-  //     products.reduce(
-  //       (acc, product) =>
-  //         acc + product.reviews.reduce((sum, review) => sum + review.rating, 0),
-  //       0
-  //     );
+  const totalRatings =
+    products &&
+    products.reduce(
+      (acc, product) =>
+        acc + product.reviews.reduce((sum, review) => sum + review.rating, 0),
+      0
+    );
 
-  //   const avg = totalRatings / totalReviewsLength || 0;
+  const avg = totalRatings / totalReviewsLength || 0;
 
-  //   const averageRating = avg.toFixed(2);
+  const averageRating = avg.toFixed(2);
 
-  //   const handleMessageSubmit = async () => {
-  //     if (isAuthenticated) {
-  //       const groupTitle = data._id + user._id;
-  //       const userId = user._id;
-  //       const sellerId = data.shop._id;
-  //       await axios
-  //         .post(`${server}/conversation/create-new-conversation`, {
-  //           groupTitle,
-  //           userId,
-  //           sellerId,
-  //         })
-  //         .then((res) => {
-  //           navigate(`/inbox?${res.data.conversation._id}`);
-  //         })
-  //         .catch((error) => {
-  //           toast.error(error.response.data.message);
-  //         });
-  //     } else {
-  //       toast.error("Please login to create a conversation");
-  //     }
-  //   };
+  const handleMessageSubmit = async () => {
+    if (isAuthenticated) {
+      const groupTitle = data._id + user._id;
+      const userId = user._id;
+      const sellerId = data.shop._id;
+      await axios
+        .post(`${server}/conversation/create-new-conversation`, {
+          groupTitle,
+          userId,
+          sellerId,
+        })
+        .then((res) => {
+          navigate(`/inbox?${res.data.conversation._id}`);
+        })
+        .catch((error) => {
+          toast.error(error.response.data.message);
+        });
+    } else {
+      toast.error("Please login to create a conversation");
+    }
+  };
   return (
     <div className="bg-white">
       {data ? (
@@ -121,7 +121,7 @@ const ProductDetails = ({ data }) => {
                 <img
                   src={`${data && data.images[select]?.url}`}
                   alt=""
-                  className="w-[80%]"
+                  className="h-[40%]"
                 />
                 <div className="w-full flex">
                   {data &&
@@ -152,12 +152,10 @@ const ProductDetails = ({ data }) => {
                 <p>{data.description}</p>
                 <div className="flex pt-3">
                   <h4 className={`${styles.productDiscountPrice}`}>
-                    {/* {data.discountPrice}$ */}
-                    {data.discount_price}$
+                    {data.discountPrice}$
                   </h4>
                   <h3 className={`${styles.price}`}>
-                    {/* {data.originalPrice ? data.originalPrice + "$" : null} */}
-                    {data.price}
+                    {data.originalPrice ? data.originalPrice + "$" : null}
                   </h3>
                 </div>
 
@@ -222,12 +220,12 @@ const ProductDetails = ({ data }) => {
                       </h3>
                     </Link>
                     <h5 className="pb-3 text-[15px]">
-                      {/* ({averageRating}/5) Ratings */}
+                      ({averageRating}/5) Ratings
                     </h5>
                   </div>
                   <div
                     className={`${styles.button} bg-[#6443d1] mt-4 !rounded !h-11`}
-                    // onClick={handleMessageSubmit}
+                    onClick={handleMessageSubmit}
                   >
                     <span className="text-white flex items-center">
                       Send Message <AiOutlineMessage className="ml-1" />
@@ -240,8 +238,8 @@ const ProductDetails = ({ data }) => {
           <ProductDetailsInfo
             data={data}
             products={products}
-            // totalReviewsLength={totalReviewsLength}
-            // averageRating={averageRating}
+            totalReviewsLength={totalReviewsLength}
+            averageRating={averageRating}
           />
           <br />
           <br />

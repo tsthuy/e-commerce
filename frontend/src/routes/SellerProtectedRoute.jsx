@@ -8,8 +8,8 @@ const SellerProtectedRoute = ({ children }) => {
   if (isLoading === true) {
     return <Loader />;
   } else {
-    if (!isSeller) {
-      return <Navigate to={`/shop-login`} replace />;
+    if (!isSeller && isLoading === false) {
+      return <Loader />;
     }
   }
   return children;

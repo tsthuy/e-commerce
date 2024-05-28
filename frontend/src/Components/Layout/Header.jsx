@@ -25,7 +25,6 @@ const Header = ({ activeHeading }) => {
   const { wishlist } = useSelector((state) => state.wishlist);
   const { cart } = useSelector((state) => state.cart);
   const { allProducts } = useSelector((state) => state.products);
-  console.log(allProducts);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [searchData, setSearchData] = useState(null);
@@ -34,19 +33,25 @@ const Header = ({ activeHeading }) => {
   const [openCart, setOpenCart] = useState(false);
   const [openWishlist, setOpenWishlist] = useState(false);
   const [open, setOpen] = useState(false);
+  const [onOpen, setOnOpen] = useState(false);
 
   const handleSearchChange = (e) => {
-    console.log(e);
     const term = e.target.value;
-    setSearchTerm(term);
 
     const filteredProducts =
       allProducts &&
       allProducts.filter((product) =>
         product.name.toLowerCase().includes(term.toLowerCase())
       );
-    console.log(filteredProducts);
     setSearchData(filteredProducts);
+
+    setSearchTerm(term);
+    if (term.length === 0) {
+      // Sử dụng 'term' thay vì 'searchTerm'
+      setOnOpen(false);
+    } else {
+      setOnOpen(true);
+    }
   };
 
   window.addEventListener("scroll", () => {
@@ -56,7 +61,7 @@ const Header = ({ activeHeading }) => {
       setActive(false);
     }
   });
-  console.log(searchData);
+
   return (
     <>
       <div className={`${styles.section}`}>
@@ -83,7 +88,10 @@ const Header = ({ activeHeading }) => {
               className="absolute right-2 top-1.5 cursor-pointer"
             />
 
-            {searchData && searchData.length !== 0 ? (
+            {onOpen &&
+            onOpen === true &&
+            searchData &&
+            searchData.length !== 0 ? (
               <div className="absolute min-h-[30vh] bg-slate-50 shadow-sm-2 z-[9] p-4 w-full">
                 {searchData.map((product, index) => (
                   <Link

@@ -21,6 +21,7 @@ import { toast } from "react-toastify";
 import Ratings from "../../Products/Ratings";
 
 const ProductCard = ({ data, isEvent }) => {
+  console.log(data);
   const { wishlist } = useSelector((state) => state.wishlist);
   const { cart } = useSelector((state) => state.cart);
 
@@ -93,7 +94,7 @@ const ProductCard = ({ data, isEvent }) => {
           </h4>
 
           <div className="flex">
-            <Ratings rating={data?.rating} />
+            <Ratings rating={data?.ratings} />
           </div>
 
           <div className="py-2 flex items-center justify-between">

@@ -80,6 +80,7 @@ const Cart = ({ setOpenCart }) => {
                 >
                   <h1 className="text-[#fff] text-[18px] font-[600]">
                     Checkout Now (USD${totalPrice})
+
                   </h1>
                 </div>
               </Link>
