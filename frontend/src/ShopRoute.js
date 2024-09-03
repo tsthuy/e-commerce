@@ -10,6 +10,7 @@ import ShopPreviewPage from "./pages/Shop/ShopPreviewPage.jsx";
 import ShopSettingsPage from "./pages/Shop/ShopSettingsPage.jsx";
 import ShopWithDrawMoneyPage from "./pages/Shop/ShopWithDrawMoneyPage.jsx";
 import ShopAllRefunds from "./pages/Shop/ShopAllRefunds.jsx";
+import ShopInboxPage from "./pages/Shop/ShopInboxPage.jsx";
 export {
   ShopDashBoardPage,
   ShopCreateProduct,
@@ -23,4 +24,5 @@ export {
   ShopPreviewPage,
   ShopSettingsPage,
   ShopAllRefunds,
+  ShopInboxPage,
 };

@@ -21,6 +21,7 @@ import {
   OrderSuccessPage,
   OrderDetailsPage,
   TrackOrderPage,
+  UserInbox,
 } from "./Routers.js";
 import {
   ShopDashBoardPage,
@@ -35,6 +36,7 @@ import {
   ShopPreviewPage,
   ShopSettingsPage,
   ShopAllRefunds,
+  ShopInboxPage,
 } from "./ShopRoute.js";
 import ProtectedAdminRoute from "./routes/ProtectedAdminRoute.jsx";
 import { ToastContainer } from "react-toastify";
@@ -122,6 +124,14 @@ const App = () => {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/inbox"
+            element={
+              <ProtectedRoute>
+                <UserInbox />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
         <Routes>
           <Route path="/" element={<HomePage />}></Route>
@@ -148,6 +158,7 @@ const App = () => {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/activation/:activation_token"
             element={<ActivationPage />}
@@ -238,6 +249,14 @@ const App = () => {
             element={
               <SellerProtectedRoute>
                 <ShopWithDrawMoneyPage />
+              </SellerProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard-messages"
+            element={
+              <SellerProtectedRoute>
+                <ShopInboxPage />
               </SellerProtectedRoute>
             }
           />

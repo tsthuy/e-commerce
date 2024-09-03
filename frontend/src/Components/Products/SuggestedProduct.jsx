@@ -22,7 +22,7 @@ const SuggestedProduct = ({ data }) => {
       {data ? (
         <div className={`p-4 ${styles.section}`}>
           <h2
-            className={`${styles.heading} text-[25px] font-[500] border-b mb-5`}
+            className={`${styles.heading} text-[25px] font-[900] border-b-8 mb-5`}
           >
             {productData && productData.length === 0
               ? "Not have any product related to this category"

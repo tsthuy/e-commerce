@@ -20,7 +20,7 @@ const AdminDashboardMain = () => {
     dispatch(getAllOrdersOfAdmin());
     dispatch(getAllSellers());
   }, []);
-
+  console.log("adminOrders", adminOrders);
   const adminEarning =
     adminOrders &&
     adminOrders.reduce((acc, item) => acc + item.totalPrice * 0.1, 0);

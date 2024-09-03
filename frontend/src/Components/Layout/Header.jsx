@@ -66,6 +66,7 @@ const Header = ({ activeHeading }) => {
     <>
       <div className={`${styles.section}`}>
         <div className="hidden 800px:h-[50px] 800px:my-[20px] 800px:flex items-center justify-between">
+          {/* logo  */}
           <div>
             <Link to="/">
               <img
@@ -112,7 +113,7 @@ const Header = ({ activeHeading }) => {
               </div>
             ) : null}
           </div>
-
+          {/* button become a seller  */}
           <div className={`${styles.button}`}>
             <Link to={`${isSeller ? "/dashboard" : "/shop-create"}`}>
               <h1 className="text-[#fff] flex items-center">
@@ -157,7 +158,7 @@ const Header = ({ activeHeading }) => {
           <div className={`${styles.noramlFlex}`}>
             <Navbar active={activeHeading} />
           </div>
-
+          {/* infor  */}
           <div className="flex">
             <div className={`${styles.noramlFlex}`}>
               <div

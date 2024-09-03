@@ -315,7 +315,7 @@ const ShippingInfo = ({
         <div>
           {user &&
             user.addresses.map((item, index) => (
-              <div className="w-full flex mt-1">
+              <div key={item} className="w-full flex mt-1">
                 <input
                   type="checkbox"
                   className="mr-3"

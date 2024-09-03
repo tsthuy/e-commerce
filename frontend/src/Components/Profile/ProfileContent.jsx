@@ -250,11 +250,7 @@ const AllOrders = () => {
 
   return (
     <div className="pl-8 pt-1">
-      <Table
-        columns={columns}
-        dataSource={data}
-        pagination={{ pageSize: 10 }}
-      />
+      <Table columns={columns} dataSource={data} pagination={{ pageSize: 5 }} />
     </div>
   );
 };
