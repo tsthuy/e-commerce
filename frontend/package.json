@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@material-ui/data-grid": "^4.0.0-alpha.37",
     "@paypal/react-paypal-js": "^8.3.0",
     "@reduxjs/toolkit": "^2.2.1",
     "@stripe/react-stripe-js": "^2.7.1",
@@ -15,6 +16,7 @@
     "antd": "^5.16.5",
     "axios": "^1.6.7",
     "cloudinary": "^2.0.3",
+    "country-state-city": "^3.2.1",
     "griddle-react": "^1.13.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
