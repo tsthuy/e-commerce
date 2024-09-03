@@ -9,7 +9,7 @@ const cors = require("cors");
 
 app.use(
   cors({
-    origin: ["http://localhost:3000"],
+    origin: ["https://e-commerce-nu-lyart.vercel.app"],
     credentials: true,
   })
 );
