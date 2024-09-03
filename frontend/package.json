@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@material-ui/data-grid": "^4.0.0-alpha.37",
     "@paypal/react-paypal-js": "^8.3.0",
     "@reduxjs/toolkit": "^2.2.1",
     "@stripe/react-stripe-js": "^2.7.1",
