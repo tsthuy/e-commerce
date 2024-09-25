@@ -84,7 +84,19 @@ const handleDeleteCheck = async (id) => {
 
   return (
     <>
-      {isLoading ? <Loader /> : <Table columns={columns} dataSource={data} />}
+    <div className="py-6">
+      <div className="flex justify-between">
+        <div className=""><h1>All Products</h1></div>
+        <div className="">
+          <Button type="default" className="bg-blue-400">+ Add new</Button>
+        </div>
+      </div>
+      {isLoading ? <Loader /> : <Table columns={columns} dataSource={data} bordered 
+       rowClassName={(record, index) =>
+          index % 2 === 0 ? "table-row-light" : "table-row-dark"  // Zebra stripe effect
+        }
+      />}
+      </div>
     </>
   );
 };
