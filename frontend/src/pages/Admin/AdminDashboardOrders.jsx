@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 
-import { DataGrid } from "@material-ui/data-grid";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllOrdersOfAdmin } from "../../redux/actions/order";
 import AdminHeader from "../../Components/Admin/Layout/AdminHeader";
