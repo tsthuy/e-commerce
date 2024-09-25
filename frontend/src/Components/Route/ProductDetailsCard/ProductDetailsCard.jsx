@@ -15,9 +15,12 @@ import {
   addToWishlist,
   removeFromWishlist,
 } from "../../../redux/actions/wishlist";
+import { getAllProductsShop } from "../../../redux/actions/product";
 
 const ProductDetailsCard = ({ setOpen, data }) => {
   const { cart } = useSelector((state) => state.cart);
+  const { products } = useSelector((state) => state.products);
+  console.log(products);
   const { wishlist } = useSelector((state) => state.wishlist);
   const dispatch = useDispatch();
   const [count, setCount] = useState(1);
@@ -51,13 +54,14 @@ const ProductDetailsCard = ({ setOpen, data }) => {
     }
   };
 
-  useEffect(() => {
-    if (wishlist && wishlist.find((i) => i._id === data._id)) {
+useEffect(() => {
+    dispatch(getAllProductsShop(data && data?.shop._id));
+    if (wishlist && wishlist.find((i) => i._id === data?._id)) {
       setClick(true);
     } else {
       setClick(false);
     }
-  }, [wishlist]);
+  }, [data, wishlist]);
 
   const removeFromWishlistHandler = (data) => {
     setClick(!click);
@@ -69,6 +73,21 @@ const ProductDetailsCard = ({ setOpen, data }) => {
     dispatch(addToWishlist(data));
   };
 
+  const totalReviewsLength =
+    products &&
+    products.reduce((acc, product) => acc + product.reviews.length, 0);
+
+  const totalRatings =
+    products &&
+    products.reduce(
+      (acc, product) =>
+        acc + product.reviews.reduce((sum, review) => sum + review.rating, 0),
+      0
+    );
+
+  const avg = totalRatings / totalReviewsLength || 0;
+
+  const averageRating = avg.toFixed(2);
   return (
     <div className="bg-[#fff]">
       {data ? (
@@ -82,9 +101,9 @@ const ProductDetailsCard = ({ setOpen, data }) => {
 
             <div className="block w-full 800px:flex">
               <div className="w-full 800px:w-[50%]">
-                <img src={`${data.images && data.images[0]?.url}`} alt="" />
-                <div className="flex">
-                  <Link to={`/shop/preview/${data.shop._id}`} className="flex">
+                <img className="rounded-lg" src={`${data.images && data.images[0]?.url}`} alt="" />
+                <div className="flex ">
+                  <Link to={`/shop/preview/${data.shop._id}`} className="flex items-center">
                     <img
                       src={`${data.shop && data.shop.avatar?.url}`}
                       alt=""
@@ -95,7 +114,7 @@ const ProductDetailsCard = ({ setOpen, data }) => {
                         {data.shop.name}
                       </h3>
                       <h5 className="pb-3 text-[15px]">
-                        {data?.ratings} Ratings
+                        {averageRating} Ratings
                       </h5>
                     </div>
                   </Link>

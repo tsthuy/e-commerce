@@ -413,7 +413,7 @@ export const productData = [
     rating: 5,
     total_sell: 49,
     stock: 10,
-    category: "Shoes",
+    category: "Shoes2",
   },
   {
     id: 1,

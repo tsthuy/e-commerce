@@ -77,7 +77,7 @@ const ProductCard = ({ data, isEvent }) => {
           <img
             src={`${data.images && data.images[0]?.url}`}
             alt=""
-            className="w-full h-[170px] object-contain"
+            className="w-full h-[170px] object-contain rounded-lg"
           />
         </Link>
         <Link to={`/shop/preview/${data.shopId}`}>
@@ -121,7 +121,7 @@ const ProductCard = ({ data, isEvent }) => {
           {click ? (
             <AiFillHeart
               size={22}
-              className="cursor-pointer absolute right-2 top-5"
+              className="cursor-pointer absolute right-4 top-5"
               onClick={() => removeFromWishlistHandler(data)}
               color={click ? "red" : "#333"}
               title="Remove from wishlist"
@@ -129,7 +129,7 @@ const ProductCard = ({ data, isEvent }) => {
           ) : (
             <AiOutlineHeart
               size={22}
-              className="cursor-pointer absolute right-2 top-5"
+              className="cursor-pointer absolute right-5 top-5"
               onClick={() => addToWishlistHandler(data)}
               color={click ? "red" : "#FA5130"}
               title="Add to wishlist"
@@ -137,14 +137,14 @@ const ProductCard = ({ data, isEvent }) => {
           )}
           <AiOutlineEye
             size={22}
-            className="cursor-pointer absolute right-2 top-14"
+            className="cursor-pointer absolute right-5 top-14"
             onClick={() => setOpen(!open)}
             color="#FA5130"
             title="Quick view"
           />
           <AiOutlineShoppingCart
             size={25}
-            className="cursor-pointer absolute right-2 top-24"
+            className="cursor-pointer absolute right-5 top-24"
             onClick={() => addToCartHandler(data._id)}
             color="#FA5130"
             title="Add to cart"
