@@ -11,8 +11,10 @@ const ShopInfo = ({ isOwner }) => {
   const [data, setData] = useState({});
   const { products } = useSelector((state) => state.products);
   const { seller } = useSelector((state) => state.seller);
+  console.log(seller);
   const [isLoading, setIsLoading] = useState(false);
   const { id } = useParams();
+  console.log(id);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -21,6 +23,7 @@ const ShopInfo = ({ isOwner }) => {
     axios
       .get(`${server}/shop/get-shop-info/${id}`)
       .then((res) => {
+        console.log(res);
         setData(res.data.shop);
         setIsLoading(false);
       })
@@ -37,19 +40,19 @@ const ShopInfo = ({ isOwner }) => {
     window.location.reload();
   };
 
-  //   const totalReviewsLength =
-  //     products &&
-  //     products.reduce((acc, product) => acc + product.reviews.length, 0);
+    const totalReviewsLength =
+      products &&
+      products.reduce((acc, product) => acc + product.reviews.length, 0);
 
-  //   const totalRatings =
-  //     products &&
-  //     products.reduce(
-  //       (acc, product) =>
-  //         acc + product.reviews.reduce((sum, review) => sum + review.rating, 0),
-  //       0
-  //     );
+    const totalRatings =
+      products &&
+      products.reduce(
+        (acc, product) =>
+          acc + product.reviews.reduce((sum, review) => sum + review.rating, 0),
+        0
+      );
 
-  //   const averageRating = totalRatings / totalReviewsLength || 0;
+    const averageRating = totalRatings / totalReviewsLength || 0;
 
   return (
     <>
@@ -60,23 +63,23 @@ const ShopInfo = ({ isOwner }) => {
           <div className="w-full py-5">
             <div className="w-full flex item-center justify-center">
               <img
-                src={`${seller.avatar?.url}`}
+                src={`${data?.avatar?.url}`}
                 alt=""
                 className="w-[150px] h-[150px] object-cover rounded-full"
               />
             </div>
-            <h3 className="text-center py-2 text-[20px]">{seller.name}</h3>
+            <h3 className="text-center py-2 text-[20px]">{data?.name}</h3>
             <p className="text-[16px] text-[#000000a6] p-[10px] flex items-center">
-              {seller.description}
+              {data?.description}
             </p>
           </div>
           <div className="p-3">
             <h5 className="font-[600]">Address</h5>
-            <h4 className="text-[#000000a6]">{seller.address}</h4>
+            <h4 className="text-[#000000a6]">{data?.address}</h4>
           </div>
           <div className="p-3">
             <h5 className="font-[600]">Phone Number</h5>
-            <h4 className="text-[#000000a6]">{seller.phoneNumber}</h4>
+            <h4 className="text-[#000000a6]">{data?.phoneNumber}</h4>
           </div>
           <div className="p-3">
             <h5 className="font-[600]">Total Products</h5>
@@ -84,12 +87,12 @@ const ShopInfo = ({ isOwner }) => {
           </div>
           <div className="p-3">
             <h5 className="font-[600]">Shop Ratings</h5>
-            <h4 className="text-[#000000b0]">4.5</h4>
+            <h4 className="text-[#000000b0]">{averageRating}</h4>
           </div>
           <div className="p-3">
             <h5 className="font-[600]">Joined On</h5>
             <h4 className="text-[#000000b0]">
-              {seller?.createdAt?.slice(0, 10)}
+              {data?.createdAt?.slice(0, 10)}
             </h4>
           </div>
           {isOwner && (

@@ -63,8 +63,8 @@ const DashBoardHero = () => {
     <div className="w-full p-8">
       <h3 className="text-[22px] font-Poppins pb-2">Overview</h3>
       <Row gutter={16}>
-        <Col className="border-red-500 border rounded-md" span={8}>
-          <div className="min-h-[20vh] bg-white shadow rounded px-2 py-5 border">
+        <Col className="rounded-md" span={8}>
+          <div className="min-h-[20vh] bg-white shadow rounded px-2 py-5">
             <div className="flex items-center">
               <AiOutlineMoneyCollect size={30} className="mr-2" />
               <h3 className="text-[18px] leading-5 font-[400] text-[#00000085]">

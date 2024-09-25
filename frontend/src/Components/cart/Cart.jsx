@@ -7,10 +7,10 @@ import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addTocart, removeFromCart } from "../../redux/actions/cart";
 import { toast } from "react-toastify";
-import { productData } from "../../static/data";
 
 const Cart = ({ setOpenCart }) => {
   const { cart } = useSelector((state) => state.cart);
+  console.log(cart);  
   const dispatch = useDispatch();
   const removeFromCartHandler = (data) => {
     dispatch(removeFromCart(data));
@@ -93,11 +93,12 @@ const Cart = ({ setOpenCart }) => {
 };
 
 const CartSingle = ({ data, quantityChangeHandler, removeFromCartHandler }) => {
+  console.log(data);
   const [value, setValue] = useState(data.qty);
-  const totalPrice = data.discountPrice * value;
+  const totalPrice = data?.discountPrice * value;
 
-  const increment = (data) => {
-    if (data.stock < value) {
+  const increment = () => {
+    if (data.stock < value + 1) {
       toast.error("Product stock limited!");
     } else {
       setValue(value + 1);
@@ -106,41 +107,42 @@ const CartSingle = ({ data, quantityChangeHandler, removeFromCartHandler }) => {
     }
   };
 
-  const decrement = (data) => {
-    setValue(value === 1 ? 1 : value - 1);
-    const updateCartData = { ...data, qty: value === 1 ? 1 : value - 1 };
-    quantityChangeHandler(updateCartData);
+  const decrement = () => {
+    if (value > 1) {
+      setValue(value - 1);
+      const updateCartData = { ...data, qty: value - 1 };
+      quantityChangeHandler(updateCartData);
+    }
   };
 
   return (
     <div className="border-b p-4">
-      <div className="w-full flex items-center">
+      <div className="w-full flex items-center justify-between">
         <div>
           <div
             className={`bg-[#e44343] border border-[#e4434373] rounded-full w-[25px] h-[25px] ${styles.noramlFlex} justify-center cursor-pointer`}
-            onClick={() => increment(data)}
+            onClick={increment}
           >
             <HiPlus size={18} color="#fff" />
           </div>
-          <span className="pl-[10px]">{data.qty}</span>
+          <span className="pl-[10px]">{value}</span>
           <div
             className="bg-[#a7abb14f] rounded-full w-[25px] h-[25px] flex items-center justify-center cursor-pointer"
-            onClick={() => decrement(data)}
+            onClick={decrement}
           >
             <HiOutlineMinus size={16} color="#7d879c" />
           </div>
         </div>
-        <img
-          //   src={`${data?.images[0]?.url}`}
-          src={`${data?.images[0].url}`}
-          alt=""
-          className="w-[130px] h-min ml-2 mr-2 rounded-[5px]"
-        />
+        <div className="">
+          <img
+            src={`${data?.images[0]?.url}`}
+            alt=""
+            className="w-[130px] h-min ml-2 mr-2 rounded-[5px]"
+          />
+        </div>
         <div className="pl-[5px]">
-          <h1>{data.name}</h1>
-          <h4 className="font-[400] text-[15px] text-[#00000082]">
-            ${data.discountPrice} * {value}
-          </h4>
+          <h1>{data.name.length > 10 ? `${data.name.substring(0, 10)}...` : data.name}</h1>
+          <h4 className="font-[400] text-[15px] text-[#00000082]">${data.discountPrice} * {value}</h4>
           <h4 className="font-[600] text-[17px] pt-[3px] text-[#d02222] font-Roboto">
             US${totalPrice}
           </h4>

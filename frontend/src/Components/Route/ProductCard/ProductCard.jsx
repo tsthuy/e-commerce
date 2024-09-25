@@ -21,14 +21,12 @@ import { toast } from "react-toastify";
 import Ratings from "../../Products/Ratings";
 
 const ProductCard = ({ data, isEvent }) => {
-  console.log(data);
   const { wishlist } = useSelector((state) => state.wishlist);
   const { cart } = useSelector((state) => state.cart);
-
   const [click, setClick] = useState(false);
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
-
+  
   useEffect(() => {
     if (wishlist && wishlist.find((i) => i._id === data._id)) {
       setClick(true);
@@ -50,18 +48,21 @@ const ProductCard = ({ data, isEvent }) => {
   const addToCartHandler = (id) => {
     const isItemExists = cart && cart.find((i) => i._id === id);
     if (isItemExists) {
-      toast.error("Item already in cart!");
+          const cartData = { ...isItemExists, qty: isItemExists.qty + 1 };
+          dispatch(addTocart(cartData));
+           toast.success("Item quantity increased in cart!");
     } else {
       if (data.stock < 1) {
         toast.error("Product stock limited!");
       } else {
+        console.log(data);
         const cartData = { ...data, qty: 1 };
         dispatch(addTocart(cartData));
         toast.success("Item added to cart successfully!");
       }
     }
   };
-
+  
   return (
     <>
       <div className="w-full h-[370px] bg-white rounded-lg shadow-sm p-3 relative cursor-pointer">
@@ -79,14 +80,14 @@ const ProductCard = ({ data, isEvent }) => {
             className="w-full h-[170px] object-contain"
           />
         </Link>
-        <Link to={`/shop/preview/`}>
+        <Link to={`/shop/preview/${data.shopId}`}>
           <h5 className={`${styles.shop_name}`}>{data.shop.name}</h5>
         </Link>
         <Link
           to={`${
             isEvent === true
-              ? `/product/${data.id}?isEvent=true`
-              : `/product/${data.id}`
+              ? `/product/${data._id}?isEvent=true`
+              : `/product/${data._id}`
           }`}
         >
           <h4 className="pb-3 font-[500]">
@@ -130,7 +131,7 @@ const ProductCard = ({ data, isEvent }) => {
               size={22}
               className="cursor-pointer absolute right-2 top-5"
               onClick={() => addToWishlistHandler(data)}
-              color={click ? "red" : "#333"}
+              color={click ? "red" : "#FA5130"}
               title="Add to wishlist"
             />
           )}
@@ -138,14 +139,14 @@ const ProductCard = ({ data, isEvent }) => {
             size={22}
             className="cursor-pointer absolute right-2 top-14"
             onClick={() => setOpen(!open)}
-            color="#333"
+            color="#FA5130"
             title="Quick view"
           />
           <AiOutlineShoppingCart
             size={25}
             className="cursor-pointer absolute right-2 top-24"
             onClick={() => addToCartHandler(data._id)}
-            color="#444"
+            color="#FA5130"
             title="Add to cart"
           />
           {open ? <ProductDetailsCard setOpen={setOpen} data={data} /> : null}

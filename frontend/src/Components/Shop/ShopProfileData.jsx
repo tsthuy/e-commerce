@@ -4,23 +4,23 @@ import { Link, useParams } from "react-router-dom";
 import { getAllProductsShop } from "../../redux/actions/product";
 import styles from "../../styles/styles";
 import ProductCard from "../Route/ProductCard/ProductCard";
-// import Ratings from "../Products/Ratings";
-// import { getAllEventsShop } from "../../redux/actions/event";
-import { productData } from "../../static/data";
+import Ratings from "../Products/Ratings";
+import { getAllEventsShop } from "../../redux/actions/event";
 const ShopProfileData = ({ isOwner }) => {
   const { products } = useSelector((state) => state.products);
-  //   const { events } = useSelector((state) => state.events);
+  console.log(products);
+    const { events } = useSelector((state) => state.events);
   const { id } = useParams();
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getAllProductsShop(id));
-    // dispatch(getAllEventsShop(id));
+    dispatch(getAllEventsShop(id));
   }, [dispatch]);
 
   const [active, setActive] = useState(1);
 
-  // const allReviews =
-  //   products && products.map((product) => product.reviews).flat();
+  const allReviews =
+  products && products.map((product) => product.reviews).flat();
 
   return (
     <div className="w-full">
@@ -81,7 +81,7 @@ const ShopProfileData = ({ isOwner }) => {
       {active === 2 && (
         <div className="w-full">
           <div className="grid grid-cols-1 gap-[20px] md:grid-cols-2 md:gap-[25px] lg:grid-cols-3 lg:gap-[25px] xl:grid-cols-4 xl:gap-[20px] mb-12 border-0">
-            {/* {events &&
+            {events &&
               events.map((i, index) => (
                 <ProductCard
                   data={i}
@@ -89,17 +89,17 @@ const ShopProfileData = ({ isOwner }) => {
                   isShop={true}
                   isEvent={true}
                 />
-              ))} */}
+              ))}
           </div>
-          {/* {events && events.length === 0 && (
+          {events && events.length === 0 && (
             <h5 className="w-full text-center py-5 text-[18px]">
               No Events have for this shop!
             </h5>
-          )} */}
+          )}
         </div>
       )}
 
-      {/* {active === 3 && (
+      {active === 3 && (
         <div className="w-full">
           {allReviews &&
             allReviews.map((item, index) => (
@@ -125,7 +125,7 @@ const ShopProfileData = ({ isOwner }) => {
             </h5>
           )}
         </div>
-      )} */}
+      )}
     </div>
   );
 };

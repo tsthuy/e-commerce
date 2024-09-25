@@ -6,11 +6,11 @@ import { Link } from "react-router-dom";
 import { getAllProductsShop } from "../../redux/actions/product";
 import { deleteProduct } from "../../redux/actions/product";
 import Loader from "../Layout/Loader";
+import axios from "axios";
 
 const AllProducts = () => {
   const { products, isLoading } = useSelector((state) => state.products);
   const { seller } = useSelector((state) => state.seller);
-  console.log(seller._id);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -18,10 +18,29 @@ const AllProducts = () => {
   }, [dispatch]);
 
   const handleDelete = (id) => {
+    console.log(id);
     dispatch(deleteProduct(id));
-    window.location.reload();
+    // window.location.reload();
   };
-
+const handleDeleteCheck = async (id) => {
+    try {
+      const response = await axios.delete(`http://localhost:8000/api/v2/product/delete-shop-product/${id}`, {
+        withCredentials: true,
+      });
+      console.log('Product deleted successfully:', response.data);
+      // Handle successful deletion (e.g., update UI, show success message)
+    } catch (error) {
+      if (error.response && error.response.status === 400 && error.response.data === 'PRO FEATURE ONLY') {
+        console.error('This feature is only available in the pro version.');
+        // Display an appropriate message to the user
+        alert('This feature is only available in the pro version.');
+      } else {
+        console.error('An error occurred while deleting the product:', error);
+        // Handle other errors
+        alert('An error occurred while deleting the product. Please try again later.');
+      }
+    }
+  };
   const columns = [
     { title: "Product Id", dataIndex: "id", key: "id", width: 150 },
     { title: "Name", dataIndex: "name", key: "name", width: 180 },
@@ -45,7 +64,7 @@ const AllProducts = () => {
       render: (_, record) => (
         <Button
           icon={<AiOutlineDelete />}
-          onClick={() => handleDelete(record.id)}
+          onClick={() => handleDeleteCheck(record.id)}
           danger
         />
       ),

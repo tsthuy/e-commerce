@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { BsFillBagFill } from "react-icons/bs";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import styles from "../styles/styles";
 import { getAllOrdersOfUser } from "../redux/actions/order";
@@ -12,19 +12,36 @@ import { toast } from "react-toastify";
 
 const UserOrderDetails = () => {
   const { orders } = useSelector((state) => state.order);
-  const { user } = useSelector((state) => state.user);
+  const { user, isAuthenticated } = useSelector((state) => state.user);
+  const [conversations, setConversations] = useState([]);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [comment, setComment] = useState("");
   const [selectedItem, setSelectedItem] = useState(null);
   const [rating, setRating] = useState(1);
-
   const { id } = useParams();
 
   useEffect(() => {
-    dispatch(getAllOrdersOfUser(user._id));
-  }, [dispatch, user._id]);
+    dispatch(getAllOrdersOfUser(user?._id));
+  }, [dispatch, user?._id]);
+   useEffect(() => {
+    const getConversation = async () => {
+      try {
+        const resonse = await axios.get(
+          `${server}/conversation/get-all-conversation-user/${user?._id}`,
+          {
+            withCredentials: true,
+          }
+        );
 
+        setConversations(resonse.data.conversations);
+      } catch (error) {
+        // console.log(error);
+      }
+    };
+    getConversation();
+  }, []);
   const data = orders && orders.find((item) => item._id === id);
 
   const reviewHandler = async (e) => {
@@ -66,6 +83,36 @@ const UserOrderDetails = () => {
       });
   };
 
+  const conversation = conversations.find(
+    (conv) => conv.members.includes(user._id) && conv.members.includes(data?.cart[0].shopId)
+  );
+  console.log(conversation);
+  const conversationId = conversation?._id;
+
+  const handleMessageSubmit = async () => {
+    if (isAuthenticated) {
+      const groupTitle = data.cart[0]._id + user._id;
+      const userId = user._id;
+      const sellerId = data.cart[0].shopId;
+      await axios
+        .post(`${server}/conversation/create-new-conversation`, {
+          groupTitle,
+          userId,
+          sellerId,
+        })
+        .then((res) => {
+          navigate(`/inbox?${res.data.conversation._id}`);
+          console.log(res.data.conversation._id);
+        })
+        .catch((error) => {
+          // toast.error(error.response.data?.message);
+          console.log(error);
+        });
+    } else {
+      toast.error("Please login to create a conversation");
+    }
+  };
+
   return (
     <div className={`py-4 min-h-screen ${styles.section}`}>
       <div className="w-full flex items-center justify-between">
@@ -90,7 +137,7 @@ const UserOrderDetails = () => {
       {data &&
         data?.cart.map((item, index) => {
           return (
-            <div className="w-full flex items-start mb-5">
+            <div className="w-full flex items-start mb-5" key={index}>
               <img
                 src={`${item.images[0]?.url}`}
                 alt=""
@@ -237,9 +284,9 @@ const UserOrderDetails = () => {
         </div>
       </div>
       <br />
-      <Link to="/">
-        <div className={`${styles.button} text-white`}>Send Message</div>
-      </Link>
+      {/* <Link to={`/inbox?${conversationId}`}> */}
+        <div onClick={handleMessageSubmit} className={`${styles.button} text-white`}>Send Message</div>
+      {/* </Link> */}
       <br />
       <br />
     </div>

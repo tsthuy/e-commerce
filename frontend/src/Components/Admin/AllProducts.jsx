@@ -64,6 +64,28 @@ const AllProducts = () => {
         </Link>
       ),
     },
+    {
+      title: "Delete",
+      key: "delete",
+      width: 120,
+      render: (_, record) => (
+        <Button
+          onClick={() => {
+            axios
+              .delete(`${server}/product/admin-delete-product/${record.id}`, {
+                withCredentials: true,
+              })
+              .then((res) => {
+                console.log(res.data.message);
+                setData(data.filter((item) => item._id !== record.id));
+              });
+          }}
+          danger
+        >
+          <AiOutlineDelete size={20} />
+        </Button>
+      ),
+    }
   ];
   const row = [];
 

@@ -67,17 +67,17 @@ export const getAllProductsShop = (id) => async (dispatch) => {
 export const deleteProduct = (id) => async (dispatch) => {
   try {
     dispatch(deleteProductRequest());
-
-    const { data } = await axios.delete(
+    console.log("hihi")
+    const response = await axios.delete(
       `${server}/product/delete-shop-product/${id}`,
       {
         withCredentials: true,
-      }
+      },
     );
-
-    dispatch(deleteProductSuccess(data.message));
+    console.log(response);
+    dispatch(deleteProductSuccess(response.data.message));
   } catch (error) {
-    dispatch(deleteProductFailed(error.response.data.message));
+    dispatch(deleteProductFailed(error.response.data ? error.response.data.message : error.message));
   }
 };
 
