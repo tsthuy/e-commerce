@@ -5,13 +5,14 @@ import { useNavigate } from "react-router-dom";
 import { createProduct } from "../../redux/actions/product";
 import { categoriesData } from "../../static/data";
 import { toast } from "react-toastify";
+import Loader from "../Layout/Loader";
 
 const CreateProduct = () => {
   const { seller } = useSelector((state) => state.seller);
-  const { success, error } = useSelector((state) => state.products);
+  const { success, error, isLoading } = useSelector((state) => state.products);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
+  console.log(isLoading);
   const [images, setImages] = useState([]);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -52,9 +53,8 @@ const CreateProduct = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
     const newForm = new FormData();
-
+    console.log(isLoading);
     images.forEach((image) => {
       newForm.set("images", image);
     });
@@ -66,7 +66,6 @@ const CreateProduct = () => {
     newForm.append("discountPrice", discountPrice);
     newForm.append("stock", stock);
     newForm.append("shopId", seller._id);
-    console.log(seller._id);
     dispatch(
       createProduct(
         name,
@@ -80,11 +79,15 @@ const CreateProduct = () => {
         images
       )
     );
+    console.log(isLoading);
   };
 
   return (
     <div className="w-[90%] 800px:w-[50%] bg-white  shadow h-[80vh] rounded-[4px] p-3 overflow-y-scroll">
-      <h5 className="text-[30px] font-Poppins text-center">Create Product</h5>
+      {isLoading ? (<Loader/>):(
+        <div className="
+        ">
+ <h5 className="text-[30px] font-Poppins text-center">Create Product</h5>
       {/* create product form */}
       <form onSubmit={handleSubmit}>
         <br />
@@ -226,6 +229,10 @@ const CreateProduct = () => {
           </div>
         </div>
       </form>
+
+        </div>
+      ) }
+     
     </div>
   );
 };

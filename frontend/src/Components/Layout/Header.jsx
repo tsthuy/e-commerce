@@ -47,12 +47,18 @@ const Header = ({ activeHeading }) => {
 
     setSearchTerm(term);
     if (term.length === 0) {
-      // Sử dụng 'term' thay vì 'searchTerm'
       setOnOpen(false);
     } else {
       setOnOpen(true);
     }
   };
+
+  document.addEventListener("click", (event) => {
+    const searchBox = document.querySelector(".search-box");
+    if (searchBox && !searchBox.contains(event.target)) {
+      setOnOpen(false);
+    }
+  });
 
   window.addEventListener("scroll", () => {
     if (window.scrollY > 70) {
@@ -93,7 +99,7 @@ const Header = ({ activeHeading }) => {
             onOpen === true &&
             searchData &&
             searchData.length !== 0 ? (
-              <div className="absolute min-h-[30vh] bg-slate-50 shadow-sm-2 z-[9] p-4 w-full">
+              <div className="absolute search-box min-h-[30vh] bg-slate-50 shadow-sm-2 z-[9] p-4 w-full">
                 {searchData.map((product, index) => (
                   <Link
                     key={index}

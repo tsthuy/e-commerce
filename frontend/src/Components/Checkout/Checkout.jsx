@@ -77,6 +77,7 @@ const Checkout = () => {
       .then((res) => {
         const coupon = res.data.couponCode;
         if (coupon) {
+          console.log(coupon);
           const shopId = coupon.shopId;
           const couponValue = coupon.value;
           const couponMinAmount = coupon.minAmount;
@@ -85,7 +86,6 @@ const Checkout = () => {
           // Check if the coupon is valid for the shop
           const isCouponValid =
             cart && cart.filter((item) => item.shopId === shopId);
-          console.log(isCouponValid);
           if (isCouponValid.length === 0) {
             toast.error("Coupon code is not valid for this shop");
             setCouponCode("");
@@ -113,10 +113,10 @@ const Checkout = () => {
             setCouponCode("");
             return; // Stop further execution
           }
-
+          
           // Apply the discount
-          const discountPrice = (totalPrice * couponValue) / 100;
-          setDiscountPrice(discountPrice);
+          const discountAmount = (totalPrice * couponValue) / 100;
+          setDiscountPrice(discountAmount);
           setCouponCodeData(coupon);
           setCouponCode("");
         } else {
@@ -130,12 +130,16 @@ const Checkout = () => {
       });
   };
 
-  const discountPercentenge = couponCodeData ? discountPrice : "";
+  let finalDiscountAmount = couponCodeData ? discountPrice : "";
+
+  if (couponCodeData && finalDiscountAmount > couponCodeData.maxAmount) {
+    finalDiscountAmount = couponCodeData.maxAmount;
+  }
 
   const totalPrice = couponCodeData
-    ? (subTotalPrice + shipping - discountPercentenge).toFixed(2)
+    ? (subTotalPrice + shipping - finalDiscountAmount).toFixed(2)
     : (subTotalPrice + shipping).toFixed(2);
-
+    
   return (
     <div className="w-full flex flex-col items-center py-8">
       <div className="w-[90%] 1000px:w-[70%] block 800px:flex">
@@ -164,7 +168,7 @@ const Checkout = () => {
             subTotalPrice={subTotalPrice}
             couponCode={couponCode}
             setCouponCode={setCouponCode}
-            discountPercentenge={discountPercentenge}
+            finalDiscountAmount={finalDiscountAmount}
           />
         </div>
       </div>
@@ -344,7 +348,7 @@ const CartData = ({
   subTotalPrice,
   couponCode,
   setCouponCode,
-  discountPercentenge,
+  finalDiscountAmount,
 }) => {
   return (
     <div className="w-full bg-[#fff] rounded-md p-5 pb-8">
@@ -361,7 +365,7 @@ const CartData = ({
       <div className="flex justify-between border-b pb-3">
         <h3 className="text-[16px] font-[400] text-[#000000a4]">Discount:</h3>
         <h5 className="text-[18px] font-[600]">
-          - {discountPercentenge ? "$" + discountPercentenge.toString() : null}
+          - {finalDiscountAmount ? "$" + finalDiscountAmount.toString() : null}
         </h5>
       </div>
       <h5 className="text-[18px] font-[600] text-end pt-3">${totalPrice}</h5>
