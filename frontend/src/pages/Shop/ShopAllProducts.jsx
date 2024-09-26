@@ -5,17 +5,21 @@ import AllProducts from "../../Components/Shop/AllProducts.jsx";
 
 const ShopAllProducts = () => {
   return (
-    <div>
+    <>
       <DashboardHeader />
-      <div className="flex justify-between w-full">
+    
+    <div className="h-screen flex flex-col">
+
+      <div className="flex flex-1 w-full">
         <div className="w-[80px] 800px:w-[330px]">
           <DashboardSideBar active={3} />
         </div>
-        <div className="w-full justify-center flex">
+        <div className="flex-grow p-4">
           <AllProducts />
         </div>
       </div>
     </div>
+    </>
   );
 };
 

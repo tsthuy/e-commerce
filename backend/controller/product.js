@@ -107,6 +107,83 @@ router.delete(
   })
 );
 
+//update product of a shop
+router.put("/update-shop-product/:id", isSeller, async (req, res, next) => {
+  try {
+    let product = await Product.findById(req.params.id);
+    if (!product) {
+      return next(new ErrorHandler("Product not found with this id", 404));
+    }
+
+    let oldImages = [];
+    let newImages = [];
+
+    // Phân loại ảnh
+    if (req.body.images && req.body.images.length > 0) {
+      req.body.images.forEach((img) => {
+        if (typeof img === 'object' && img.public_id && img.url) {
+          oldImages.push(img);
+        } else if (typeof img === 'string' && img.startsWith('data:image')) {
+          newImages.push(img);
+        }
+      });
+    }
+
+    // Duyệt qua tất cả ảnh trong cơ sở dữ liệu
+    for (const dbImg of product.images) {
+      const imgExistsInOldImages = oldImages.some(
+        (oldImg) => oldImg.public_id === dbImg.public_id
+      );
+
+      // Nếu ảnh không tồn tại trong oldImages, xóa ảnh khỏi Cloudinary
+      if (!imgExistsInOldImages) {
+        await cloudinary.v2.uploader.destroy(dbImg.public_id);
+      }
+    }
+
+    // Cập nhật lại images của product chỉ giữ lại những ảnh có trong oldImages
+    product.images = product.images.filter((dbImg) =>
+      oldImages.some((oldImg) => oldImg.public_id === dbImg.public_id)
+    );
+
+    // Tải ảnh mới lên Cloudinary và thêm vào sản phẩm
+    const imagesLinks = [];
+    for (const newImg of newImages) {
+      const result = await cloudinary.v2.uploader.upload(newImg, {
+        folder: "products",
+      });
+      imagesLinks.push({
+        public_id: result.public_id,
+        url: result.secure_url,
+      });
+    }
+
+    // Kết hợp ảnh cũ và ảnh mới
+    product.images = [...product.images, ...imagesLinks];
+
+    // Cập nhật sản phẩm
+    product = await Product.findByIdAndUpdate(req.params.id, {
+      ...req.body,
+      images: product.images,
+    }, {
+      new: true,
+      runValidators: true,
+      useFindAndModify: false,
+    });
+
+    res.status(200).json({
+      success: true,
+      product,
+    });
+  } catch (error) {
+    console.log(error);
+    return next(new ErrorHandler(error.message, 500));
+  }
+});
+
+
+
+
 //admin delete product
 router.delete(
   "/admin-delete-product/:id",

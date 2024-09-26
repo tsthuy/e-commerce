@@ -39,7 +39,7 @@ console.log(data);
           src={record?.images[0]?.url}  // Now this will correctly access the image URL
           alt={record.name}
           style={{ width: 50, height: 50, marginRight: 10 }}
-          className="rounded-full"
+          className="rounded-lg"
         />
         {record.name}  
       </div>

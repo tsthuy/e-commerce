@@ -14,7 +14,6 @@ exports.isAuthenticated = catchAsyncErrors(async (req, res, next) => {
   const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
 
   req.user = await User.findById(decoded.id);
-  // console.log("from cookie check user", req.user);
   next();
 });
 
@@ -27,7 +26,6 @@ exports.isSeller = catchAsyncErrors(async (req, res, next) => {
   const decoded = jwt.verify(seller_token, process.env.JWT_SECRET_KEY);
 
   req.seller = await Shop.findById(decoded.id);
-  console.log("from cookie check seller", req.seller);
 
   next();
 });
