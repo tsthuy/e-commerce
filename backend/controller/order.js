@@ -231,4 +231,29 @@ router.get(
   })
 );
 
+//delete order by id --- for seller
+router.delete(
+  "/shop/delete-order/:id",
+  isAuthenticated,
+  isSeller,
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const order = await Order.findById(req.params.id);
+
+      if (!order) {
+        return next(new ErrorHandler("Order not found with this id", 400));
+      }
+
+      await order.deleteOne();
+
+      res.status(200).json({
+        success: true,
+        message: "Order is deleted successfully",
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
+
 module.exports = router;
