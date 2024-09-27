@@ -23,6 +23,7 @@ import { Country, State } from "country-state-city";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { clearErrors, clearMessages } from "../../redux/reducers/user";
+import TrackOrder from "./subProfile/TrackOrder";
 
 const ProfileContent = ({ active }) => {
   const { user, error, successMessage } = useSelector((state) => state.user);
@@ -240,12 +241,12 @@ const AllOrders = () => {
 
   const data = orders
     ? orders.map((item) => ({
-        key: item._id,
-        id: item._id,
-        itemsQty: item.cart.length,
-        total: `US$ ${item.totalPrice}`,
-        status: item.status,
-      }))
+      key: item._id,
+      id: item._id,
+      itemsQty: item.cart.length,
+      total: `US$ ${item.totalPrice}`,
+      status: item.status,
+    }))
     : [];
 
   return (
@@ -335,82 +336,7 @@ const AllRefundOrders = () => {
   );
 };
 
-const TrackOrder = () => {
-  const { user } = useSelector((state) => state.user);
-  const { orders } = useSelector((state) => state.order);
-  const dispatch = useDispatch();
 
-  useEffect(() => {
-    dispatch(getAllOrdersOfUser(user._id));
-  }, []);
-
-  const columns = [
-    {
-      title: "Order ID",
-      dataIndex: "id",
-      key: "id",
-      width: 150,
-    },
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      width: 130,
-      render: (status) => (
-        <span
-          className={status === "Delivered" ? "text-green-500" : "text-red-700"}
-        >
-          {status}
-        </span>
-      ),
-    },
-    {
-      title: "Items Qty",
-      dataIndex: "itemsQty",
-      key: "itemsQty",
-      width: 130,
-    },
-    {
-      title: "Total",
-      dataIndex: "total",
-      key: "total",
-      width: 130,
-    },
-    {
-      title: "",
-      key: "action",
-      width: 150,
-      render: (text, record) => (
-        <Link to={`/user/track/order/${record.id}`}>
-          <Button icon={<MdTrackChanges size={20} />} />
-        </Link>
-      ),
-    },
-  ];
-
-  const row = [];
-
-  orders &&
-    orders.forEach((item) => {
-      row.push({
-        id: item._id,
-        itemsQty: item.cart.length,
-        total: "US$ " + item.totalPrice,
-        status: item.status,
-      });
-    });
-
-  return (
-    <div className="pl-8 pt-1">
-      <Table
-        dataSource={row} // Replace with your data source
-        columns={columns}
-        pagination={{ pageSize: 10 }} // Set the desired page size
-        rowKey="id" // Ensure you have a unique key for each row
-      />
-    </div>
-  );
-};
 
 const ChangePassword = () => {
   const [oldPassword, setOldPassword] = useState("");

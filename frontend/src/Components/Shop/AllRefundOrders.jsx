@@ -1,19 +1,23 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import Loader from "../Layout/Loader";
 import { getAllOrdersOfShop } from "../../redux/actions/order";
 import { AiOutlineArrowRight } from "react-icons/ai";
-import { Table, Button } from "antd";
+import { Table, Button, Tag } from "antd";
+import TableData from "../../Common/TableData";
+import SearchFilter from "../../utils/SearchFilter";
+
 const AllRefundOrders = () => {
   const { orders, isLoading } = useSelector((state) => state.order);
   const { seller } = useSelector((state) => state.seller);
-
   const dispatch = useDispatch();
+
+  const [filteredData, setFilteredData] = useState([]); // State to store filtered data
 
   useEffect(() => {
     dispatch(getAllOrdersOfShop(seller._id));
-  }, [dispatch]);
+  }, [dispatch, seller]);
 
   const refundOrders =
     orders &&
@@ -24,10 +28,26 @@ const AllRefundOrders = () => {
 
   const columns = [
     {
-      title: "Order ID",
-      dataIndex: "id",
+      title: "Product",
+      dataIndex: "product",
       key: "id",
       width: 150,
+      render: (_, record) => {
+        const displayName =
+          record.cart[0].name.length > 10
+            ? `${record.cart[0].name.substring(0, 10)}...`
+            : record.cart[0].name;
+        return (
+          <div className="flex items-center">
+            <img
+              className="w-10 h-10 rounded-lg"
+              src={record.cart[0].images[0].url}
+              alt="product"
+            />
+            {displayName}
+          </div>
+        );
+      },
     },
     {
       title: "Status",
@@ -35,11 +55,9 @@ const AllRefundOrders = () => {
       key: "status",
       width: 130,
       render: (text, record) => (
-        <span
-          className={record.status === "Delivered" ? "greenColor" : "redColor"}
-        >
-          {text}
-        </span>
+        <Tag color={record.status === "Delivered" ? "green" : "processing"}>
+          {record.status.toUpperCase()}
+        </Tag>
       ),
     },
     {
@@ -47,12 +65,17 @@ const AllRefundOrders = () => {
       dataIndex: "itemsQty",
       key: "itemsQty",
       width: 130,
+      render: (_, record) => <div>{record.cart.length}</div>,
     },
     {
       title: "Total",
       dataIndex: "total",
       key: "total",
       width: 130,
+      render: (_, record) =>
+
+
+        <div className="font-bold">{record.totalPrice}</div>
     },
     {
       title: "",
@@ -67,13 +90,13 @@ const AllRefundOrders = () => {
   ];
 
   const row = [];
-
   refundOrders &&
     refundOrders.forEach((item) => {
       row.push({
+        product: item,
         id: item._id,
         itemsQty: item.cart.length,
-        total: "US$ " + item.totalPrice,
+        total: item.totalPrice,
         status: item.status,
       });
     });
@@ -84,12 +107,22 @@ const AllRefundOrders = () => {
         <Loader />
       ) : (
         <div className="w-full mx-8 pt-1 mt-10 bg-white">
-          <Table
-            dataSource={row} // Replace with your data source
-            columns={columns}
-            pagination={{ pageSize: 10 }} // Set the desired page size
-            rowKey="id" // Ensure you have a unique key for each row
+          {/* Use SearchFilter */}
+          <SearchFilter
+            data={refundOrders} // Data to be filtered
+            filterKey="status" // Filter by status
+            filterOptions={[
+              { value: "Processing refund", label: "Processing Refund" },
+              { value: "Refund Success", label: "Refund Success" },
+            ]}
+            searchPaths={["cart[0].name", "cart[0].id"]}// Search by product name or ID
+            searchPlaceholder="Search by product or ID"
+            setFilteredData={setFilteredData} // Pass filtered data back
           />
+
+
+          {/* Render the filtered data in the table */}
+          <TableData columns={columns} data={filteredData} loading={isLoading} />
         </div>
       )}
     </>

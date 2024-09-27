@@ -104,16 +104,18 @@ const Checkout = () => {
             return; // Stop further execution
           }
 
-          // Check if the selected product matches the coupon's selectedProduct
-          const isProductEligible = isCouponValid.some(
-            (item) => item.name === couponSelectedProduct
-          );
-          if (!isProductEligible) {
-            toast.error("Coupon code is not valid for the selected product");
-            setCouponCode("");
-            return; // Stop further execution
+          // if the coupon has selectedProduct
+          if (couponSelectedProduct) {
+            // Check if the selected product matches the coupon's selectedProduct
+            const isProductEligible = isCouponValid.some(
+              (item) => item.name === couponSelectedProduct
+            );
+            if (!isProductEligible) {
+              toast.error("Coupon code is not valid for the selected product");
+              setCouponCode("");
+              return; // Stop further execution
+            }
           }
-          
           // Apply the discount
           const discountAmount = (totalPrice * couponValue) / 100;
           setDiscountPrice(discountAmount);
@@ -139,7 +141,7 @@ const Checkout = () => {
   const totalPrice = couponCodeData
     ? (subTotalPrice + shipping - finalDiscountAmount).toFixed(2)
     : (subTotalPrice + shipping).toFixed(2);
-    
+
   return (
     <div className="w-full flex flex-col items-center py-8">
       <div className="w-[90%] 1000px:w-[70%] block 800px:flex">

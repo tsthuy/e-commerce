@@ -45,13 +45,13 @@ const AllProducts = () => {
         item.name.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
-    
+
     setFilteredData(updatedData); // Update the filtered data
     console.log(updatedData.length);
 
   }, [products, searchTerm, filterType]);
 
-  
+
 
   const handleDeleteCheck = async (id) => {
     try {
@@ -137,11 +137,13 @@ const AllProducts = () => {
       width: 150,
       render: (_, record) => (
         <div style={{ display: "flex", gap: "10px" }}>
-            <Button onClick={() => {setOpenEdit(!openEdit);
-            setSelectedProduct(record.product);}
-            }>
-              <AiOutlineEdit size={20} />
-            </Button>
+          <Button onClick={() => {
+            setOpenEdit(!openEdit);
+            setSelectedProduct(record.product);
+          }
+          }>
+            <AiOutlineEdit size={20} />
+          </Button>
           <Button danger onClick={() => handleDeleteCheck(record.id)}>
             <AiOutlineDelete size={20} />
           </Button>
@@ -164,7 +166,7 @@ const AllProducts = () => {
     <>
       <div className="py-6">
         <div className="flex justify-between py-2">
-          
+
           {/* Filter by Sold Out */}
           <div>
             <Select
@@ -179,40 +181,40 @@ const AllProducts = () => {
           </div>
           {/* search */}
           <div style={{ position: "relative", display: "inline-block" }}>
-  <input
-    type="text"
-    placeholder="Search by name"
-    value={searchTerm}
-    onChange={(e) => setSearchTerm(e.target.value)}
-    style={{
-      padding: "5px 35px 5px 10px", // Extra padding on the right for the icon
-      borderRadius: "4px",
-      border: "1px solid #ccc",
-      width: "200px", // Adjust the width as needed
-    }}
-  />
-  <AiOutlineSearch
-    size={20} // Icon size
-    style={{
-      position: "absolute",
-      right: "10px", // Position it inside the input field
-      top: "50%",
-      transform: "translateY(-50%)", // Center the icon vertically
-      color: "#60A5FA", // Icon color
-      cursor: "pointer",
-    }}
-  />
-</div>
-        {/* add new */}
+            <input
+              type="text"
+              placeholder="Search by name"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              style={{
+                padding: "5px 35px 5px 10px", // Extra padding on the right for the icon
+                borderRadius: "4px",
+                border: "1px solid #ccc",
+                width: "200px", // Adjust the width as needed
+              }}
+            />
+            <AiOutlineSearch
+              size={20} // Icon size
+              style={{
+                position: "absolute",
+                right: "10px", // Position it inside the input field
+                top: "50%",
+                transform: "translateY(-50%)", // Center the icon vertically
+                color: "#60A5FA", // Icon color
+                cursor: "pointer",
+              }}
+            />
+          </div>
+          {/* add new */}
           <div>
             <Link to={"/dashboard-create-product"}>
-            <Button type="default" className="bg-blue-400">
-              + Add new
-            </Button>
+              <Button type="default" className="bg-blue-400">
+                + Add new
+              </Button>
             </Link>
           </div>
         </div>
-        
+
         {isLoading ? (
           <Loader />
         ) : (
@@ -227,7 +229,7 @@ const AllProducts = () => {
         )}
         {open && <ProductDetailsCard setOpen={setOpen} data={selectedProduct} />}
       </div>
-      {openEdit && <EditProducts setOpenEdit={setOpenEdit} data={selectedProduct} filteredData = {filteredData} setFilteredData={setFilteredData} setUpdated={setUpdated} updated={updated}/>}
+      {openEdit && <EditProducts setOpenEdit={setOpenEdit} data={selectedProduct} filteredData={filteredData} setFilteredData={setFilteredData} setUpdated={setUpdated} updated={updated} />}
     </>
   );
 };

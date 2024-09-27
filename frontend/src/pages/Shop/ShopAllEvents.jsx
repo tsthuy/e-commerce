@@ -11,7 +11,7 @@ const ShopAllEvents = () => {
         <div className="w-[80px] 800px:w-[330px] border-red-700">
           <DashboardSideBar active={5} />
         </div>
-        <div className="w-full justify-center flex">
+        <div className="w-full  flex flex-col">
           <AllEvents />
         </div>
       </div>
