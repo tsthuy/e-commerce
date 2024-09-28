@@ -9,8 +9,9 @@ import axios from "axios";
 import { server } from "../../server";
 import { toast } from "react-toastify";
 import { Button, Table } from "antd";
+import TableData from "../../Common/TableData";
 
-const AllUsers = () => {
+const AdminAllUsers = () => {
   const dispatch = useDispatch();
   const { users } = useSelector((state) => state.user);
   const [open, setOpen] = useState(false);
@@ -32,34 +33,49 @@ const AllUsers = () => {
 
   const columns = [
     {
-      title: "User ID",
-      dataIndex: "id",
-      key: "id",
-      width: 150,
+      title: "Image",
+      dataIndex: "ImageUrl",
+      key: "ImageUrl",
+      width: 100,
+      render: (_, record) => (
+        <img
+          src={record.imageUrl}
+          alt={record.name}
+          className="w-[50px] h-[50px] rounded-lg"
+        />
+      ),
     },
     {
       title: "Name",
       dataIndex: "name",
       key: "name",
       width: 130,
+      searchable: true,
+      sorter: (a, b) => a.name.localeCompare(b.name),
     },
     {
       title: "Email",
       dataIndex: "email",
       key: "email",
       width: 130,
+      searchable: true,
+      sorter: (a, b) => a.email.localeCompare(b.email),
     },
     {
       title: "User Role",
       dataIndex: "role",
       key: "role",
       width: 130,
+      searchable: true,
+      sorter: (a, b) => a.role.localeCompare(b.role),
     },
     {
       title: "Joined At",
       dataIndex: "joinedAt",
       key: "joinedAt",
       width: 130,
+      sorter: (a, b) => new Date(a.joinedAt) - new Date(b.joinedAt),
+
     },
     {
       title: "Delete User",
@@ -73,29 +89,22 @@ const AllUsers = () => {
     },
   ];
 
-  const data =
-    users &&
-    users.map((item) => ({
-      key: item._id,
-      id: item._id,
-      name: item.name,
-      email: item.email,
-      role: item.role,
-      joinedAt: item.createdAt.slice(0, 10),
-    }));
+  const dataMapping = {
+    id: (item) => item._id,
+    imageUrl: (item) => item.avatar.url,
+    name: (item) => item.name,
+    email: (item) => item.email,
+    role: (item) => item.role,
+    joinedAt: (item) => item.createdAt.slice(0, 10),
+  }
+
 
   return (
     <div className="w-full flex justify-center pt-5">
       <div className="w-[97%]">
         <h3 className="text-[22px] font-Poppins pb-2">All Users</h3>
         <div className="w-full min-h-[45vh] bg-white rounded">
-          <Table
-            columns={columns}
-            dataSource={data}
-            pagination={{ pageSize: 4 }}
-            rowKey="key"
-            size="small"
-          />
+          <TableData data={users} dataMapping={dataMapping} columns={columns} />
         </div>
         {open && (
           <div className="w-full fixed top-0 left-0 z-[999] bg-[#00000039] flex items-center justify-center h-screen">
@@ -128,4 +137,4 @@ const AllUsers = () => {
   );
 };
 
-export default AllUsers;
+export default AdminAllUsers;

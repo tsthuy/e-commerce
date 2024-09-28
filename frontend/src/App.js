@@ -62,6 +62,8 @@ import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import axios from "axios";
 import { server } from "./server.js";
+import AdminProtectedRoute from "./routes/AdminProtectedRoute.jsx";
+import AdminOrderDetails from "./Components/Admin/AdminOrderDetails.jsx";
 const App = () => {
   const [stripeApiKey, setStripeApiKey] = useState("");
   async function getStripeApiKey() {
@@ -309,6 +311,7 @@ const App = () => {
               </ProtectedAdminRoute>
             }
           />
+          
           <Route
             path="/admin-products"
             element={

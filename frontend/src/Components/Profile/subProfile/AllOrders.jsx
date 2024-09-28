@@ -1,69 +1,60 @@
-import React from "react";
-import { AgGridReact } from "ag-grid-react";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllOrdersOfUser } from "../../../redux/actions/order";
+import TableDataAntd from "../../../Common/TableDataAntd";
+import { useEffect } from "react";
+import { AiOutlineDelete, AiOutlineEdit } from "react-icons/ai";
+import { Button } from "antd";
 import { Link } from "react-router-dom";
-import { Button } from "@material-ui/core";
-import { AiOutlineArrowRight } from "react-icons/ai";
-
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-alpine.css";
+import axios from "axios";
+import { server } from "../../../server";
+import { toast } from "react-toastify";
 
 const AllOrders = () => {
-  const rowData = [
-    // ...dữ liệu của bạn
-    {
-      id: "938467938dhsdf83434",
-      itemsQty: 1,
-      total: 120,
-      status: "Processing",
-    },
-    // thêm các đơn hàng khác tại đây
-  ];
+  const { user } = useSelector((state) => state.user);
+  const { orders } = useSelector((state) => state.order);
+  const dispatch = useDispatch();
 
-  const columnDefs = [
-    { field: "id", headerName: "Order ID", minWidth: 150, flex: 0.7 },
-    {
-      field: "status",
-      headerName: "Status",
-      minWidth: 130,
-      flex: 0.7,
-      cellStyle: (params) =>
-        params.value === "Delivered" ? { color: "green" } : { color: "red" },
-    },
-    {
-      field: "itemsQty",
-      headerName: "Items Qty",
-      type: "number",
-      minWidth: 130,
-      flex: 0.7,
-    },
-    {
-      field: "total",
-      headerName: "Total",
-      type: "number",
-      minWidth: 130,
-      flex: 0.8,
-    },
-    {
-      field: "action",
-      headerName: "",
-      minWidth: 150,
-      cellRendererFramework: (params) => (
-        <Link to={`/user/order/${params.value}`}>
-          <Button>
-            <AiOutlineArrowRight size={20} />
-          </Button>
-        </Link>
-      ),
-    },
-  ];
+  useEffect(() => {
+    dispatch(getAllOrdersOfUser(user._id));
+  }, [dispatch, user._id]);
 
+  const handleDeleteOrder = async (id) => {
+    try {
+      const res = await axios.delete(`${server}/order/shop/delete-order/${id}`, {
+        withCredentials: true,
+      });
+      toast.success(res.data.message);
+      dispatch(getAllOrdersOfUser(user._id));
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  };
+  const renderAction = (record) => {
+    return (
+      <div className="flex gap-2">
+
+        <Button type="default" className="bg-blue-400 text-white" >
+          <Link to={`/user/order/${record.id}`}>Details</Link>
+        </Button>
+        <Button onClick={() => handleDeleteOrder(record.id)} danger>
+
+          <AiOutlineDelete />
+
+        </Button>
+      </div>
+    );
+  };
+  const dataMapping = {
+    name: (item) => item.cart[0].name,
+    imageUrl: (item) => item.cart[0].images[0].url,
+    itemsQty: (item) => item.cart.length,
+    total: (item) => "US$ " + item.totalPrice,
+    status: (item) => item.status,
+
+  }
   return (
-    <div className="ag-theme-alpine" style={{ height: 400, width: "100%" }}>
-      <AgGridReact
-        rowData={rowData}
-        columnDefs={columnDefs}
-        domLayout="autoHeight"
-      />
+    <div className="">
+      <TableDataAntd data={orders} actionRenderer={renderAction} dataMapping={dataMapping} />
     </div>
   );
 };

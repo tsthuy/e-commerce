@@ -1,7 +1,7 @@
 import React from "react";
-import AllUsers from "../../Components/Admin/AllUsers";
 import AdminHeader from "../../Components/Admin/Layout/AdminHeader";
 import AdminSideBar from "../../Components/Admin/Layout/AdminSideBar";
+import AdminAllUsers from "../../Components/Admin/AdminAllUsers";
 
 const AdminDashboardUsers = () => {
   return (
@@ -12,7 +12,7 @@ const AdminDashboardUsers = () => {
           <div className="w-[80px] 800px:w-[330px]">
             <AdminSideBar active={4} />
           </div>
-          <AllUsers />
+          <AdminAllUsers />
         </div>
       </div>
     </div>

@@ -9,6 +9,9 @@ import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import { getAllSellers } from "../../redux/actions/seller";
 import { Button, Table } from "antd";
+import seller from "../../redux/reducers/seller";
+import TableDataAntd from "../../Common/TableDataAntd";
+import TableData from "../../Common/TableData";
 
 const AllSellers = () => {
   const dispatch = useDispatch();
@@ -19,7 +22,7 @@ const AllSellers = () => {
   useEffect(() => {
     dispatch(getAllSellers());
   }, [dispatch]);
-
+  console.log(sellers);
   const handleDelete = async (id) => {
     await axios
       .delete(`${server}/shop/delete-seller/${id}`, { withCredentials: true })
@@ -29,85 +32,91 @@ const AllSellers = () => {
 
     dispatch(getAllSellers());
   };
-
   const columns = [
     {
-      title: "Seller ID",
-      dataIndex: "id",
-      key: "id",
-      width: 150,
+      title: "Image",
+      dataIndex: "imageUrl",
+      key: "imageUrl",
+      width: 120,
+      searchable: false,
+      render: (_, record) => (
+        <img src={record.imageUrl} alt={record.name} className="w-[50px] h-[50px] rounded-lg" />
+      ) // Cho phép tìm kiếm
     },
     {
       title: "Name",
       dataIndex: "name",
       key: "name",
       width: 130,
+      searchable: true,
+      sorter: (a, b) => a.name.localeCompare(b.name),
     },
     {
       title: "Email",
       dataIndex: "email",
       key: "email",
       width: 130,
+      searchable: true,
+      sorter: (a, b) => a.email.localeCompare(b.email),
     },
     {
       title: "Seller Address",
-      dataIndex: "address",
-      key: "address",
+      dataIndex: "sellerAddress",
+      key: "sellerAddress",
       width: 130,
+      searchable: true,
+      sorter: (a, b) => a.sellerAddress.localeCompare(b.sellerAddress),
     },
     {
       title: "Joined At",
       dataIndex: "joinedAt",
       key: "joinedAt",
       width: 130,
+      render: (text, record) => <span>{new Date(record.joinedAt).toLocaleDateString()}</span>,
+      sorter: (a, b) => new Date(a.joinedAt) - new Date(b.joinedAt),
     },
     {
-      title: "Preview Shop",
-      key: "preview",
+      title: "Action",
+      key: "action",
       width: 150,
-      render: (_, record) => (
-        <Link to={`/shop/preview/${record.id}`}>
-          <Button>
-            <AiOutlineEye size={20} />
+      render: (text, record) => (
+        <div className="flex justify-center gap-3">
+          <Link to={`/shop/preview/${record.id}`}>
+            <Button>
+              <AiOutlineEye size={20} />
+            </Button>
+          </Link>
+          <Button
+            onClick={() => {
+              setUserId(record._id);
+              setOpen(true);
+            }}
+            className="bg-blue-600"
+          >
+            Delete
           </Button>
-        </Link>
-      ),
-    },
-    {
-      title: "Delete Seller",
-      key: "delete",
-      width: 150,
-      render: (_, record) => (
-        <Button onClick={() => setUserId(record.id) || setOpen(true)}>
-          <AiOutlineDelete size={20} />
-        </Button>
+        </div>
       ),
     },
   ];
-  const row = [];
-  sellers &&
-    sellers.forEach((item) => {
-      row.push({
-        id: item._id,
-        name: item?.name,
-        email: item?.email,
-        joinedAt: item.createdAt.slice(0, 10),
-        address: item.address,
-      });
-    });
+
+  const dataMapping = {
+    id: (item) => item._id,
+    name: (item) => item.name,
+    imageUrl: (item) => item.avatar.url,
+    email: (item) => item.email,
+    sellerAddress: (item) => item.address,
+    joinedAt: (item) => item.createdAt.slice(0, 10),
+  };
+
+
 
   return (
     <div className="w-full flex justify-center pt-5">
       <div className="w-[97%]">
         <h3 className="text-[22px] font-Poppins pb-2">All Users</h3>
         <div className="w-full min-h-[45vh] bg-white rounded">
-          <Table
-            columns={columns}
-            dataSource={row}
-            pagination={{ pageSize: 4 }}
-            rowKey={"key"}
-            size="small"
-          />
+          <TableData data={sellers} dataMapping={dataMapping} columns={columns} />
         </div>
         {open && (
           <div className="w-full fixed top-0 left-0 z-[999] bg-[#00000039] flex items-center justify-center h-screen">

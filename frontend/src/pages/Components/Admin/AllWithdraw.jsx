@@ -1,18 +1,20 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { server } from "../../../server";
-import { Link } from "react-router-dom";
 import { BsPencil } from "react-icons/bs";
 import { RxCross1 } from "react-icons/rx";
 import styles from "../../../styles/styles";
 import { toast } from "react-toastify";
-import { Table } from "antd";
+import TableData from "../../../Common/TableData";
+import { Button, Tag } from "antd";
+import { AiOutlineDelete } from "react-icons/ai";
 
 const AllWithdraw = () => {
   const [data, setData] = useState([]);
   const [open, setOpen] = useState(false);
   const [withdrawData, setWithdrawData] = useState();
   const [withdrawStatus, setWithdrawStatus] = useState("Processing");
+  const [updated, setUpdated] = useState(false);
 
   useEffect(() => {
     axios
@@ -25,67 +27,107 @@ const AllWithdraw = () => {
       .catch((error) => {
         console.log(error.response.data.message);
       });
-  }, []);
-
+  }, [updated]);
+  console.log(data);
+  const handleDelete = async (id) => {
+    await axios
+      .delete(`${server}/withdraw/delete-withdraw-request/${id}`, {
+        withCredentials: true,
+      })
+      .then((res) => {
+        toast.success(res.data.message);
+        setUpdated(!updated);
+      });
+  };
   const columns = [
     {
-      title: "Withdraw Id",
-      dataIndex: "id",
-      key: "id",
-      width: 150,
+      title: "Image",
+      dataIndex: "imageUrl",
+      key: "imageUrl",
+      width: 50,
+      render: (_, record) => (
+        <img
+          src={record.imageUrl}
+          alt={record.name}
+          className="w-[50px] h-[50px] rounded-lg"
+        />
+      ),
     },
     {
       title: "Shop Name",
       dataIndex: "name",
       key: "name",
-      width: 180,
+      width: 100,
+      searchable: true,
     },
     {
-      title: "Shop Id",
-      dataIndex: "shopId",
-      key: "shopId",
-      width: 180,
+      title: "Available Balance",
+      dataIndex: "availableBalance",
+      key: "availableBalance",
+      width: 100,
+      sorter: (a, b) => b.availableBalance - a.availableBalance,
     },
     {
       title: "Amount",
       dataIndex: "amount",
       key: "amount",
       width: 100,
+      render: (text) => <div className="text-red-600 font-bold text-center">${text}</div>,
+      sorter: (a, b) => a.amount - b.amount,
     },
     {
       title: "Status",
       dataIndex: "status",
       key: "status",
       width: 80,
+      render: (text) => (
+        <Tag color={text === "Processing" ? "orange" : "green"}>{text}</Tag>
+      ),
+      sorter: (a, b) => a.status.localeCompare(b.status),
+
     },
     {
       title: "Request given at",
       dataIndex: "createdAt",
       key: "createdAt",
       width: 130,
+      sorter: (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
     },
     {
       title: "Update Status",
       key: "updateStatus",
       width: 130,
-      render: (text, record) =>
-        record.status === "Processing" && (
-          <BsPencil
-            size={20}
-            className="cursor-pointer"
-            onClick={() => {
-              setOpen(true); // Uncomment and use these functions
-              setWithdrawData(record); // if you have them defined
-            }}
-          />
-        ),
+      render: (text, record) => {
+        return (
+          <div className="flex items-center gap-5">
+            {record.status === "Processing" ? (
+              <BsPencil
+                size={20}
+                className="cursor-pointer"
+                onClick={() => {
+                  setOpen(true);
+                  setWithdrawData(record);
+                }}
+              />
+            ) : (
+              <span>{record.updatedAt || "N/A"}</span>
+            )}
+
+            {/* Delete Button */}
+            <Button danger onClick={() => handleDelete(record.id)}>
+              <AiOutlineDelete />
+            </Button>
+          </div>
+        );
+      },
+      sorter: (a, b) => new Date(a.updatedAt) - new Date(b.updatedAt),
     },
   ];
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (id) => {
     await axios
       .put(
-        `${server}/withdraw/update-withdraw-request/${withdrawData.id}`,
+        `${server}/withdraw/delete-withdraw-request/${id}`,
         {
           sellerId: withdrawData.shopId,
         },
@@ -98,28 +140,23 @@ const AllWithdraw = () => {
       });
   };
 
-  const row = [];
+  const dataMapping = {
+    id: (item) => item._id,
+    imageUrl: (item) => item.seller.avatar.url,
+    name: (item) => item.seller.name,
+    availableBalance: (item) => item.seller.availableBalance,
+    amount: (item) => item.amount,
+    status: (item) => item.status,
+    createdAt: (item) => item.createdAt.slice(0, 10),
+    updatedAt: (item) => {
+      return item.updatedAt ? item.updatedAt.slice(0, 10) : "";
+    },
+  }
 
-  data &&
-    data.forEach((item) => {
-      row.push({
-        id: item._id,
-        shopId: item.seller._id,
-        name: item.seller.name,
-        amount: "US$ " + item.amount,
-        status: item.status,
-        createdAt: item.createdAt.slice(0, 10),
-      });
-    });
   return (
     <div className="w-full flex items-center pt-5 justify-center">
       <div className="w-[95%] bg-white">
-        <Table
-          dataSource={row}
-          columns={columns}
-          pagination={{ pageSize: 10 }}
-          rowKey={"id"}
-        />
+        <TableData data={data} dataMapping={dataMapping} columns={columns} />
       </div>
       {open && (
         <div className="w-full fixed h-screen top-0 left-0 bg-[#00000031] z-[9999] flex items-center justify-center">

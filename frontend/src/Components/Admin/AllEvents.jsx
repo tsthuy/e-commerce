@@ -4,6 +4,7 @@ import { AiOutlineEye } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import { server } from "../../server";
 import { Table, Button } from "antd";
+import TableData from "../../Common/TableData";
 const AllEvents = () => {
   const [events, setEvents] = useState([]);
   useEffect(() => {
@@ -16,36 +17,49 @@ const AllEvents = () => {
 
   const columns = [
     {
-      title: "Product Id",
-      dataIndex: "id",
-      key: "id",
-      width: 150,
+      title: "Image",
+      dataIndex: "imageUrl",
+      key: "imageUrl",
+      width: 50,
+      render: (_, record) => (
+        <img
+          src={record.imageUrl}
+          alt={record.name}
+          className="w-[50px] h-[50px] rounded-lg"
+        />
+      ),
     },
     {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      width: 180,
+      width: 50,
+      searchable: true,
+      sorter: (a, b) => a.name.localeCompare(b.name),
     },
     {
       title: "Price",
       dataIndex: "price",
       key: "price",
       width: 100,
+      searchable: true,
+      sorter: (a, b) => a.price - b.price,
     },
     {
       title: "Stock",
-      dataIndex: "Stock",
+      dataIndex: "stock",
       key: "Stock",
       width: 80,
-      render: (text) => <span>{text}</span>,
+      searchable: true,
+      sorter: (a, b) => a.stock - b.stock,
     },
     {
       title: "Sold out",
-      dataIndex: "sold",
+      dataIndex: "sold_out",
       key: "sold",
       width: 130,
-      render: (text) => <span>{text}</span>,
+      searchable: true,
+      sorter: (a, b) => a.sold_out - b.sold_out,
     },
     {
       title: "",
@@ -60,29 +74,21 @@ const AllEvents = () => {
       ),
     },
   ];
+  const dataMapping = {
+    id: (item) => item._id,
+    imageUrl: (item) => item.images[0].url,
+    name: (item) => item.name,
+    price: (item) => item.discountPrice,
+    stock: (item) => item.stock,
+    sold_out: (item) => item.sold_out
+  }
 
-  const row = [];
 
-  events &&
-    events.forEach((item) => {
-      row.push({
-        id: item._id,
-        name: item.name,
-        price: "US$ " + item.discountPrice,
-        Stock: item.stock,
-        sold: item.sold_out,
-      });
-    });
+
 
   return (
     <div className="w-full mx-8 pt-1 mt-10 bg-white">
-      <Table
-        dataSource={row}
-        columns={columns}
-        pagination={{ pageSize: 10 }}
-        rowKey="id"
-        scroll={{ y: "calc(100vh - 200px)" }} // Adjust height as needed
-      />
+      <TableData data={events} dataMapping={dataMapping} columns={columns} />
     </div>
   );
 };

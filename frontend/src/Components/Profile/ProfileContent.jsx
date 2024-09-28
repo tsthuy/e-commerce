@@ -24,7 +24,8 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { clearErrors, clearMessages } from "../../redux/reducers/user";
 import TrackOrder from "./subProfile/TrackOrder";
-
+import AllRefundUsers from "./subProfile/AllRefundUser";
+import AllOrders from "./subProfile/AllOrders";
 const ProfileContent = ({ active }) => {
   const { user, error, successMessage } = useSelector((state) => state.user);
   const [name, setName] = useState(user && user.name);
@@ -173,7 +174,7 @@ const ProfileContent = ({ active }) => {
       {/* Refund */}
       {active === 3 && (
         <div>
-          <AllRefundOrders />
+          <AllRefundUsers />
         </div>
       )}
 
@@ -201,140 +202,8 @@ const ProfileContent = ({ active }) => {
   );
 };
 
-const AllOrders = () => {
-  const { user } = useSelector((state) => state.user);
-  const { orders } = useSelector((state) => state.order);
-  const dispatch = useDispatch();
 
-  useEffect(() => {
-    dispatch(getAllOrdersOfUser(user._id));
-  }, [dispatch, user._id]);
 
-  const columns = [
-    { title: "Order ID", dataIndex: "id", key: "id" },
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      render: (text) => (
-        <span
-          className={text === "Delivered" ? "text-green-500" : "text-red-700"}
-        >
-          {text}
-        </span>
-      ),
-    },
-    { title: "Items Qty", dataIndex: "itemsQty", key: "itemsQty" },
-    { title: "Total", dataIndex: "total", key: "total" },
-    {
-      title: "",
-      key: "action",
-      render: (text, record) => (
-        <Link to={`/user/order/${record.id}`}>
-          <Button>
-            <AiOutlineArrowRight size={20} />
-          </Button>
-        </Link>
-      ),
-    },
-  ];
-
-  const data = orders
-    ? orders.map((item) => ({
-      key: item._id,
-      id: item._id,
-      itemsQty: item.cart.length,
-      total: `US$ ${item.totalPrice}`,
-      status: item.status,
-    }))
-    : [];
-
-  return (
-    <div className="pl-8 pt-1">
-      <Table columns={columns} dataSource={data} pagination={{ pageSize: 5 }} />
-    </div>
-  );
-};
-
-const AllRefundOrders = () => {
-  const { user } = useSelector((state) => state.user);
-  const { orders } = useSelector((state) => state.order);
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(getAllOrdersOfUser(user._id));
-  }, []);
-
-  const eligibleOrders =
-    orders && orders.filter((item) => item.status === "Processing refund");
-
-  const columns = [
-    {
-      title: "Order ID",
-      dataIndex: "id",
-      key: "id",
-      width: 150,
-    },
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      width: 130,
-      render: (status) => (
-        <span
-          className={status === "Delivered" ? "text-green-500" : "text-red-700"}
-        >
-          {status}
-        </span>
-      ),
-    },
-    {
-      title: "Items Qty",
-      dataIndex: "itemsQty",
-      key: "itemsQty",
-      width: 130,
-    },
-    {
-      title: "Total",
-      dataIndex: "total",
-      key: "total",
-      width: 130,
-    },
-    {
-      title: "",
-      key: "action",
-      width: 150,
-      render: (text, record) => (
-        <Link to={`/user/order/${record.id}`}>
-          <Button icon={<AiOutlineArrowRight />} />
-        </Link>
-      ),
-    },
-  ];
-
-  const row = [];
-
-  eligibleOrders &&
-    eligibleOrders.forEach((item) => {
-      row.push({
-        id: item._id,
-        itemsQty: item.cart.length,
-        total: "US$ " + item.totalPrice,
-        status: item.status,
-      });
-    });
-
-  return (
-    <div className="pl-8 pt-1">
-      <Table
-        dataSource={row} // Replace with your data source
-        columns={columns}
-        pagination={{ pageSize: 10 }} // Set the desired page size
-        rowKey="id" // Ensure you have a unique key for each row
-      />
-    </div>
-  );
-};
 
 
 

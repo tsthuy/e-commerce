@@ -3,7 +3,7 @@ import { Button, Input, Space, Table } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import Highlighter from "react-highlight-words";
 
-const TableData = ({ data, columns, dataMapping = {} }) => {
+const TableDataAntd = ({ data, actionRenderer, extraColumns = [], dataMapping }) => {
     const [searchText, setSearchText] = useState("");
     const [searchedColumn, setSearchedColumn] = useState("");
     const searchInput = useRef(null);
@@ -70,26 +70,72 @@ const TableData = ({ data, columns, dataMapping = {} }) => {
             ),
     });
 
+    const defaultColumns = [
+        {
+            title: "Image",
+            dataIndex: "imageUrl",
+            key: "imageUrl",
+            width: 50,
+            render: (imageUrl) => (
+                <img
+                    src={imageUrl}
+                    alt="product"
+                    style={{ width: "50px", height: "50px" }}
+                    className="rounded-lg"
+                />
+            ),
+        },
+        {
+            title: "Name",
+            dataIndex: "name",
+            key: "name",
+            width: 150,
+            sorter: (a, b) => a.name.localeCompare(b.name),
+            ...getColumnSearchProps("name"),
+        },
+        {
+            title: "Status",
+            dataIndex: "status",
+            key: "status",
+            width: 130,
+            render: (status) => (
+                <span className={status === "Delivered" ? "text-green-500" : "text-red-700"}>{status}</span>
+            ),
+            sorter: (a, b) => a.status.localeCompare(b.status),
+            ...getColumnSearchProps("status"),
+        },
+        {
+            title: "Items Qty",
+            dataIndex: "itemsQty",
+            key: "itemsQty",
+            width: 130,
+            sorter: (a, b) => a.itemsQty - b.itemsQty,
+        },
+        {
+            title: "Total",
+            dataIndex: "total",
+            key: "total",
+            width: 130,
+            sorter: (a, b) => parseFloat(a.total.replace("US$ ", "")) - parseFloat(b.total.replace("US$ ", "")),
+        },
+    ];
 
+    // Cột "action" luôn nằm ngoài cùng bên phải
+    const actionColumn = {
+        title: "",
+        key: "action",
+        width: 150,
+        render: (text, record) => actionRenderer ? actionRenderer(record) : "No action",
+    };
 
-    // Kết hợp các cột được truyền từ props với cột mặc định
-    const allColumns = columns.map((col) => {
-        if (col.searchable) {
-            return {
-                ...col,
-                ...getColumnSearchProps(col.dataIndex),
-            };
-        }
-        return col;
-    });
+    // Combine default columns, extraColumns, and action column
+    const columns = [...defaultColumns, ...extraColumns, actionColumn];
 
-    const finalColumns = [...allColumns];
-
-    // Ánh xạ dữ liệu theo dataMapping
+    // Generate row data based on dataMapping or default structure
     const generateRowData = () => {
         return data && data.map((item) => ({
             id: item._id,
-            ...Object.keys(dataMapping).reduce((acc, key) => {
+            ...Object.keys(dataMapping || {}).reduce((acc, key) => {
                 acc[key] = dataMapping[key](item);
                 return acc;
             }, {}),
@@ -102,7 +148,7 @@ const TableData = ({ data, columns, dataMapping = {} }) => {
         <div className="pl-8 pt-1">
             <Table
                 dataSource={row}
-                columns={finalColumns}
+                columns={columns}
                 pagination={{ pageSize: 10 }}
                 rowKey="id"
                 bordered
@@ -111,4 +157,4 @@ const TableData = ({ data, columns, dataMapping = {} }) => {
     );
 };
 
-export default TableData;
+export default TableDataAntd;
