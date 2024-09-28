@@ -9,7 +9,7 @@ const cors = require("cors");
 
 app.use(
   cors({
-    origin: ["https://e-commerce-backend-eeq6y2g2v-huys-projects-14f3b8e2.vercel.app"],
+    origin: ["https://e-commerce-48ndjirho-huys-projects-14f3b8e2.vercel.app/"],
     credentials: true,
   })
 );
