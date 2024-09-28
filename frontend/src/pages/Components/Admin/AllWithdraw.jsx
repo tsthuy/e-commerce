@@ -12,10 +12,12 @@ import { AiOutlineDelete } from "react-icons/ai";
 const AllWithdraw = () => {
   const [data, setData] = useState([]);
   const [open, setOpen] = useState(false);
-  const [withdrawData, setWithdrawData] = useState();
-  const [withdrawStatus, setWithdrawStatus] = useState("Processing");
+  const [withdrawData, setWithdrawData] = useState(null); // Default to null
+  const [withdrawStatus, setWithdrawStatus] = useState(""); // Default to an empty string
   const [updated, setUpdated] = useState(false);
+  const [withdrawId, setWithdrawId] = useState("");
 
+  // Fetch all withdrawal requests
   useEffect(() => {
     axios
       .get(`${server}/withdraw/get-all-withdraw-request`, {
@@ -29,6 +31,7 @@ const AllWithdraw = () => {
       });
   }, [updated]);
   console.log(data);
+  // Handle deleting a withdrawal request
   const handleDelete = async (id) => {
     await axios
       .delete(`${server}/withdraw/delete-withdraw-request/${id}`, {
@@ -39,6 +42,8 @@ const AllWithdraw = () => {
         setUpdated(!updated);
       });
   };
+
+  // Define columns for the table
   const columns = [
     {
       title: "Image",
@@ -72,7 +77,9 @@ const AllWithdraw = () => {
       dataIndex: "amount",
       key: "amount",
       width: 100,
-      render: (text) => <div className="text-red-600 font-bold text-center">${text}</div>,
+      render: (text) => (
+        <div className="text-red-600 font-bold text-center">${text}</div>
+      ),
       sorter: (a, b) => a.amount - b.amount,
     },
     {
@@ -84,7 +91,6 @@ const AllWithdraw = () => {
         <Tag color={text === "Processing" ? "orange" : "green"}>{text}</Tag>
       ),
       sorter: (a, b) => a.status.localeCompare(b.status),
-
     },
     {
       title: "Request given at",
@@ -106,7 +112,9 @@ const AllWithdraw = () => {
                 className="cursor-pointer"
                 onClick={() => {
                   setOpen(true);
-                  setWithdrawData(record);
+                  setWithdrawData(record.seller._id); // Store the selected withdraw data
+                  setWithdrawStatus(record.status); // Set the current status in the dropdown
+                  setWithdrawId(record.id);
                 }}
               />
             ) : (
@@ -123,23 +131,30 @@ const AllWithdraw = () => {
       sorter: (a, b) => new Date(a.updatedAt) - new Date(b.updatedAt),
     },
   ];
-
-  const handleSubmit = async (id) => {
+  console.log(withdrawData);
+  // Handle updating a withdrawal request
+  const handleSubmit = async () => {
     await axios
       .put(
-        `${server}/withdraw/delete-withdraw-request/${id}`,
+        `${server}/withdraw/update-withdraw-request/${withdrawId}`,
         {
-          sellerId: withdrawData.shopId,
+          sellerId: withdrawData,
         },
         { withCredentials: true }
       )
       .then((res) => {
+        console.log(res.data.message);
         toast.success("Withdraw request updated successfully!");
-        setData(res.data.withdraws);
-        setOpen(false);
+        setUpdated(!updated); // Trigger re-fetch of data
+        setOpen(false); // Close the modal
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error("Error updating withdraw request");
       });
   };
 
+  // Data mapping for the table
   const dataMapping = {
     id: (item) => item._id,
     imageUrl: (item) => item.seller.avatar.url,
@@ -148,10 +163,9 @@ const AllWithdraw = () => {
     amount: (item) => item.amount,
     status: (item) => item.status,
     createdAt: (item) => item.createdAt.slice(0, 10),
-    updatedAt: (item) => {
-      return item.updatedAt ? item.updatedAt.slice(0, 10) : "";
-    },
-  }
+    updatedAt: (item) => (item.updatedAt ? item.updatedAt.slice(0, 10) : ""),
+    seller: (item) => item.seller,
+  };
 
   return (
     <div className="w-full flex items-center pt-5 justify-center">
@@ -165,7 +179,7 @@ const AllWithdraw = () => {
               <RxCross1 size={25} onClick={() => setOpen(false)} />
             </div>
             <h1 className="text-[25px] text-center font-Poppins">
-              Update Withdraw status
+              Update Withdraw Status
             </h1>
             <br />
             <select
@@ -173,9 +187,10 @@ const AllWithdraw = () => {
               id=""
               onChange={(e) => setWithdrawStatus(e.target.value)}
               className="w-[200px] h-[35px] border rounded"
+              value={withdrawStatus} // Set the current value
             >
-              <option value={withdrawStatus}>{withdrawData.status}</option>
-              <option value={withdrawStatus}>Succeed</option>
+              <option value="Processing">Processing</option>
+              <option value="Succeed">Succeed</option>
             </select>
             <button
               type="submit"

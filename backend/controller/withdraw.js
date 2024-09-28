@@ -80,6 +80,7 @@ router.put(
     try {
       const { sellerId } = req.body;
 
+      // Tìm và cập nhật yêu cầu rút tiền
       const withdraw = await Withdraw.findByIdAndUpdate(
         req.params.id,
         {
@@ -89,8 +90,16 @@ router.put(
         { new: true }
       );
 
-      const seller = await Shop.findById(sellerId);
+      if (!withdraw) {
+        return next(new ErrorHandler("Withdraw request not found", 404));
+      }
 
+      const seller = await Shop.findById(sellerId);
+      if (!seller) {
+        return next(new ErrorHandler("Seller not found", 404));
+      }
+
+      // Tạo transaction mới cho seller
       const transection = {
         _id: withdraw._id,
         amount: withdraw.amount,
@@ -99,9 +108,7 @@ router.put(
       };
 
       seller.transections = [...seller.transections, transection];
-
       await seller.save();
-
       try {
         await sendMail({
           email: seller.email,
@@ -109,17 +116,24 @@ router.put(
           message: `Hello ${seller.name}, Your withdraw request of ${withdraw.amount}$ is on the way. Delivery time depends on your bank's rules it usually takes 3days to 7days.`,
         });
       } catch (error) {
-        return next(new ErrorHandler(error.message, 500));
+        console.error("Error sending email:", error.message);
+        // Log lỗi nhưng không gửi phản hồi lại
       }
-      res.status(201).json({
+      // Gửi phản hồi thành công ngay lập tức
+      return res.status(201).json({
         success: true,
         withdraw,
       });
+
+      // Gửi email xác nhận sau khi đã gửi phản hồi
+      
+
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));
     }
   })
 );
+
 // delete withdraw request ---- admin
 router.delete(
   "/delete-withdraw-request/:id",
