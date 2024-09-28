@@ -9,7 +9,7 @@ const SellerProtectedRoute = ({ children }) => {
     return <Loader />;
   } else {
     if (!isSeller && isLoading === false) {
-      return <Loader />;
+      return <Navigate to="/shop-login" />;
     }
   }
   return children;

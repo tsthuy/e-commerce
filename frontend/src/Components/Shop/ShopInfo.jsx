@@ -6,6 +6,7 @@ import styles from "../../styles/styles";
 import Loader from "../Layout/Loader";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllProductsShop } from "../../redux/actions/product";
+import { toast } from "react-toastify";
 
 const ShopInfo = ({ isOwner }) => {
   const [data, setData] = useState({});
@@ -34,25 +35,35 @@ const ShopInfo = ({ isOwner }) => {
   }, []);
 
   const logoutHandler = async () => {
-    axios.get(`${server}/shop/logout`, {
-      withCredentials: true,
-    });
-    window.location.reload();
+    try {
+      const response = await axios.get(`${server}/shop/logout`, {
+        withCredentials: true,
+      });
+      if (response.status === 201) {
+        toast.success("Logout successful");
+        window.location.reload();
+      } else {
+        console.log("Logout failed");
+      }
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
   };
 
-    const totalReviewsLength =
-      products &&
-      products.reduce((acc, product) => acc + product.reviews.length, 0);
 
-    const totalRatings =
-      products &&
-      products.reduce(
-        (acc, product) =>
-          acc + product.reviews.reduce((sum, review) => sum + review.rating, 0),
-        0
-      );
+  const totalReviewsLength =
+    products &&
+    products.reduce((acc, product) => acc + product.reviews.length, 0);
 
-    const averageRating = totalRatings / totalReviewsLength || 0;
+  const totalRatings =
+    products &&
+    products.reduce(
+      (acc, product) =>
+        acc + product.reviews.reduce((sum, review) => sum + review.rating, 0),
+      0
+    );
+
+  const averageRating = totalRatings / totalReviewsLength || 0;
 
   return (
     <>
