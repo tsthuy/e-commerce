@@ -36,7 +36,7 @@ router.post("/create-user", async (req, res, next) => {
 
     const activationToken = createActivationToken(user);
 
-    const activationUrl = `http://localhost:3000/activation/${activationToken}`;
+    const activationUrl = `https://e-commerce-nu-lyart.vercel.app/activation/${activationToken}`;
 
     try {
       await sendMail({
