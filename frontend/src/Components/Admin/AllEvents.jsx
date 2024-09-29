@@ -1,10 +1,13 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { AiOutlineEye } from "react-icons/ai";
+import { AiOutlineDelete, AiOutlineEye } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import { server } from "../../server";
 import { Table, Button } from "antd";
 import TableData from "../../Common/TableData";
+import product from "../../redux/reducers/product";
+import { toast } from "react-toastify";
+
 const AllEvents = () => {
   const [events, setEvents] = useState([]);
   useEffect(() => {
@@ -14,70 +17,71 @@ const AllEvents = () => {
         setEvents(res.data.events);
       });
   }, []);
-
+  const handleDelete = (id) => {
+    axios
+      .delete(`${server}/event/admin/delete/${id}`, { withCredentials: true })
+      .then((res) => {
+        toast.success(res.data.message);
+        setEvents(events.filter((item) => item._id !== id));
+      });
+  };
   const columns = [
     {
-      title: "Image",
-      dataIndex: "imageUrl",
-      key: "imageUrl",
-      width: 50,
+      title: "Name",
+      key: "name",
+      dataIndex: "name",
+      width: 180,
+      render: (_, record) => {
+        const displayName = record.product.name.length > 10
+          ? `${record.product.name.substring(0, 10)}...`
+          : record.product.name;
+        return (
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <img
+              src={record.product.images[0]?.url}
+              alt={record.product.name}
+              style={{ width: 50, height: 50, marginRight: 10 }}
+              className="rounded-lg"
+            />
+            {displayName}
+          </div>
+        );
+      },
+    },
+    {
+      title: "Finish_Date", dataIndex: "finish_date", key: "Finish_Date", width: 180,
+    },
+    { title: "Price", dataIndex: "price", key: "price", width: 100 },
+    { title: "Stock", dataIndex: "stock", key: "stock", width: 80 },
+    { title: "Sold out", dataIndex: "sold", key: "sold", width: 130 },
+    {
+      title: "",
+      key: "preview",
+      width: 100,
       render: (_, record) => (
-        <img
-          src={record.imageUrl}
-          alt={record.name}
-          className="w-[50px] h-[50px] rounded-lg"
-        />
+        <Link to={`/product/${record.id}?isEvent=true`}>
+          <Button icon={<AiOutlineEye />} />
+        </Link>
       ),
     },
     {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-      width: 50,
-      searchable: true,
-      sorter: (a, b) => a.name.localeCompare(b.name),
-    },
-    {
-      title: "Price",
-      dataIndex: "price",
-      key: "price",
-      width: 100,
-      searchable: true,
-      sorter: (a, b) => a.price - b.price,
-    },
-    {
-      title: "Stock",
-      dataIndex: "stock",
-      key: "Stock",
-      width: 80,
-      searchable: true,
-      sorter: (a, b) => a.stock - b.stock,
-    },
-    {
-      title: "Sold out",
-      dataIndex: "sold_out",
-      key: "sold",
-      width: 130,
-      searchable: true,
-      sorter: (a, b) => a.sold_out - b.sold_out,
-    },
-    {
       title: "",
-      key: "Preview",
-      width: 100,
-      render: (record) => (
-        <Link to={`/product/${record.id}?isEvent=true`}>
-          <Button>
-            <AiOutlineEye size={20} />
-          </Button>
-        </Link>
+      key: "delete",
+      width: 120,
+      render: (_, record) => (
+        <Button
+          icon={<AiOutlineDelete />}
+          onClick={() => handleDelete(record.id)}
+          danger
+        />
       ),
     },
   ];
   const dataMapping = {
+    finish_date: (item) => new Date(item.Finish_Date).toLocaleDateString(),
     id: (item) => item._id,
-    imageUrl: (item) => item.images[0].url,
     name: (item) => item.name,
+    product: (item) => item,
     price: (item) => item.discountPrice,
     stock: (item) => item.stock,
     sold_out: (item) => item.sold_out
