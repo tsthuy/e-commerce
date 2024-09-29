@@ -53,14 +53,14 @@ const DashBoardHero = () => {
         labels: last7Days,
         datasets: [
           {
-            label: "Doanh thu (USD)",
+            label: "Revenue (USD)",
             data: revenueData,
             backgroundColor: "#064FF0",
             borderColor: "#064FF0",
             yAxisID: "y-revenue",
           },
           {
-            label: "Số lượng đơn hàng",
+            label: "Orders",
             data: ordersData,
             backgroundColor: "#FF3030",
             borderColor: "#FF3030",

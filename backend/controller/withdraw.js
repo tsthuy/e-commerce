@@ -15,32 +15,39 @@ router.post(
     try {
       const { amount } = req.body;
 
+      // Tìm shop của seller
+      const shop = await Shop.findById(req.seller._id);
+
+      // Kiểm tra xem shop có đủ số dư để rút không
+      if (shop.availableBalance < amount) {
+        return next(new ErrorHandler("Not enough balance to withdraw this amount", 400));
+      }
+
+      // Tạo dữ liệu cho yêu cầu rút tiền
       const data = {
         seller: req.seller,
         amount,
       };
 
+      // Tạo yêu cầu rút tiền
+      const withdraw = await Withdraw.create(data);
+
+      // Trừ số dư khả dụng
+      shop.availableBalance -= amount;
+      await shop.save();
+
+      // Gửi email sau khi yêu cầu rút tiền đã được tạo thành công
       try {
         await sendMail({
           email: req.seller.email,
           subject: "Withdraw Request",
-          message: `Hello ${req.seller.name}, Your withdraw request of ${amount}$ is processing. It will take 3days to 7days to processing! `,
-        });
-        res.status(201).json({
-          success: true,
+          message: `Hello ${req.seller.name}, Your withdraw request of ${amount}$ is processing. It will take 3 to 7 days to process!`,
         });
       } catch (error) {
-        return next(new ErrorHandler(error.message, 500));
+        return next(new ErrorHandler("Withdraw created but failed to send email", 500));
       }
 
-      const withdraw = await Withdraw.create(data);
-
-      const shop = await Shop.findById(req.seller._id);
-
-      shop.availableBalance = shop.availableBalance - amount;
-
-      await shop.save();
-
+      // Trả về phản hồi thành công
       res.status(201).json({
         success: true,
         withdraw,
@@ -50,6 +57,7 @@ router.post(
     }
   })
 );
+
 
 // get all withdraws --- admnin
 

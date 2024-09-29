@@ -44,6 +44,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Store from "./redux/store.js";
 import { loadUser, loadSeller } from "./redux/actions/user.js";
 import SellerProtectedRoute from "./routes/SellerProtectedRoute.jsx";
+import SellerProtectedLogout from "./routes/SellerProtectedLogout.jsx";
 import ShopHomePage from "./pages/Shop/ShopHomePage.jsx";
 import { getAllProducts } from "./redux/actions/product.js";
 import { getAllEvents } from "./redux/actions/event.js";
@@ -78,7 +79,6 @@ const App = () => {
     Store.dispatch(getAllProducts());
     getStripeApiKey();
   }, []);
-  console.log(stripeApiKey);
   return (
     <>
       <BrowserRouter>
@@ -185,9 +185,9 @@ const App = () => {
           <Route
             path="/shop/:id"
             element={
-              <SellerProtectedRoute>
+              <SellerProtectedLogout>
                 <ShopHomePage />
-              </SellerProtectedRoute>
+              </SellerProtectedLogout>
             }
           />
           <Route

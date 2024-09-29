@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import TableData from "../../../Common/TableData";
 import { Button, Tag } from "antd";
 import { AiOutlineDelete } from "react-icons/ai";
-
+import Loader from "../../../Components/Layout/Loader";
 const AllWithdraw = () => {
   const [data, setData] = useState([]);
   const [open, setOpen] = useState(false);
@@ -16,6 +16,7 @@ const AllWithdraw = () => {
   const [withdrawStatus, setWithdrawStatus] = useState(""); // Default to an empty string
   const [updated, setUpdated] = useState(false);
   const [withdrawId, setWithdrawId] = useState("");
+  const [loading, setLoading] = useState(false);
 
   // Fetch all withdrawal requests
   useEffect(() => {
@@ -134,6 +135,7 @@ const AllWithdraw = () => {
   console.log(withdrawData);
   // Handle updating a withdrawal request
   const handleSubmit = async () => {
+    setLoading(true);
     await axios
       .put(
         `${server}/withdraw/update-withdraw-request/${withdrawId}`,
@@ -146,10 +148,13 @@ const AllWithdraw = () => {
         console.log(res.data.message);
         toast.success("Withdraw request updated successfully!");
         setUpdated(!updated); // Trigger re-fetch of data
-        setOpen(false); // Close the modal
+        setOpen(false);// Close the modal
+
+        setLoading(false);
       })
       .catch((err) => {
         console.log(err);
+        setLoading(false);
         toast.error("Error updating withdraw request");
       });
   };
@@ -174,32 +179,35 @@ const AllWithdraw = () => {
       </div>
       {open && (
         <div className="w-full fixed h-screen top-0 left-0 bg-[#00000031] z-[9999] flex items-center justify-center">
-          <div className="w-[50%] min-h-[40vh] bg-white rounded shadow p-4">
-            <div className="flex justify-end w-full">
-              <RxCross1 size={25} onClick={() => setOpen(false)} />
+          {loading ? (<Loader />) : (
+            <div className="w-[50%] min-h-[40vh] bg-white rounded shadow p-4">
+              <div className="flex justify-end w-full">
+                <RxCross1 size={25} onClick={() => setOpen(false)} />
+              </div>
+              <h1 className="text-[25px] text-center font-Poppins">
+                Update Withdraw Status
+              </h1>
+              <br />
+              <select
+                name=""
+                id=""
+                onChange={(e) => setWithdrawStatus(e.target.value)}
+                className="w-[200px] h-[35px] border rounded"
+                value={withdrawStatus} // Set the current value
+              >
+                <option value="Processing">Processing</option>
+                <option value="Succeed">Succeed</option>
+              </select>
+              <button
+                type="submit"
+                className={`block ${styles.button} text-white !h-[42px] mt-4 text-[18px]`}
+                onClick={handleSubmit}
+              >
+                Update
+              </button>
             </div>
-            <h1 className="text-[25px] text-center font-Poppins">
-              Update Withdraw Status
-            </h1>
-            <br />
-            <select
-              name=""
-              id=""
-              onChange={(e) => setWithdrawStatus(e.target.value)}
-              className="w-[200px] h-[35px] border rounded"
-              value={withdrawStatus} // Set the current value
-            >
-              <option value="Processing">Processing</option>
-              <option value="Succeed">Succeed</option>
-            </select>
-            <button
-              type="submit"
-              className={`block ${styles.button} text-white !h-[42px] mt-4 text-[18px]`}
-              onClick={handleSubmit}
-            >
-              Update
-            </button>
-          </div>
+          )}
+
         </div>
       )}
     </div>
