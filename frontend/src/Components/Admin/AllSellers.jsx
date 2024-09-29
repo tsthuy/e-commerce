@@ -88,7 +88,7 @@ const AllSellers = () => {
           </Link>
           <Button
             onClick={() => {
-              setUserId(record._id);
+              setUserId(record.id);
               setOpen(true);
             }}
             className="bg-blue-600"
