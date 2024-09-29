@@ -20,7 +20,7 @@ import Ratings from "./Ratings";
 import axios from "axios";
 
 const ProductDetails = ({ data }) => {
-  console.log(data);  
+  console.log(data);
   const { wishlist } = useSelector((state) => state.wishlist);
   const { cart } = useSelector((state) => state.cart);
   const { user, isAuthenticated } = useSelector((state) => state.user);
@@ -128,9 +128,8 @@ const ProductDetails = ({ data }) => {
                     data.images.map((i, index) => (
                       <div
                         key={index}
-                        className={`mx-2 ${
-                          select === index ? "border" : "null"
-                        } cursor-pointer`}
+                        className={`mx-2 ${select === index ? "border" : "null"
+                          } cursor-pointer`}
                       >
                         <img
                           src={`${i?.url}`}
@@ -304,7 +303,7 @@ const ProductDetailsInfo = ({
       {active === 2 ? (
         <div className="w-full min-h-[40vh] flex flex-col items-center py-3 overflow-y-scroll">
           {data &&
-            data.reviews.map((item, index) => (
+            data.reviews && data.reviews.map((item, index) => (
               <div className="w-full flex my-2">
                 <img
                   src={`${item.user.avatar?.url}`}
@@ -322,7 +321,8 @@ const ProductDetailsInfo = ({
             ))}
 
           <div className="w-full flex justify-center">
-            {data && data.reviews.length === 0 && (
+            {console.log(data)}
+            {data && data.reviews && data.reviews.length === 0 && (
               <h5>No Reviews have for this product!</h5>
             )}
           </div>
