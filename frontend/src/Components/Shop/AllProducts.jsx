@@ -24,6 +24,7 @@ const AllProducts = () => {
   const [filterType, setFilterType] = useState("all"); // Holds filter value
   const [openEdit, setOpenEdit] = useState(false);
   const [updated, setUpdated] = useState(false);
+  const [loading, setLoading] = useState(false);
   // Fetch all products when component loads
   useEffect(() => {
     dispatch(getAllProductsShop(seller._id));
@@ -54,15 +55,18 @@ const AllProducts = () => {
 
 
   const handleDeleteCheck = async (id) => {
+    setLoading(true);
     try {
       const response = await axios.delete(
         `http://localhost:8000/api/v2/product/delete-shop-product/${id}`,
         { withCredentials: true }
       );
+      setLoading(false);
       toast.success("Product deleted successfully");
       setFilteredData(filteredData.filter((item) => item._id !== id));
       setUpdated(!updated);
     } catch (error) {
+      setLoading(false);
       if (
         error.response &&
         error.response.status === 400 &&
@@ -215,7 +219,7 @@ const AllProducts = () => {
           </div>
         </div>
 
-        {isLoading ? (
+        {isLoading || loading ? (
           <Loader />
         ) : (
           <Table

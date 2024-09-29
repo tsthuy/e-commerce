@@ -36,6 +36,7 @@ const AllEvents = () => {
   const handleDelete = (id) => {
     dispatch(deleteEvent(id));
     // window.location.reload();
+    setFilteredData(filteredData.filter((item) => item._id !== id));
   };
 
   const columns = [

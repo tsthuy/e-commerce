@@ -286,9 +286,8 @@ const MessageList = ({
   }, [me, data]);
   return (
     <div
-      className={`w-full flex p-3 px-3 ${
-        active === index ? "bg-[#00000010]" : "bg-transparent"
-      }  cursor-pointer`}
+      className={`w-full flex p-3 px-3 ${active === index ? "bg-[#00000010]" : "bg-transparent"
+        }  cursor-pointer`}
       onClick={(e) =>
         setActive(index) ||
         handleClick(data._id) ||
@@ -314,7 +313,7 @@ const MessageList = ({
         <p className="text-[16px] text-[#000c]">
           {!loading && data?.lastMessageId !== userData?._id
             ? "You:"
-            : userData?.name.split(" ")[0] + ": "}{" "}
+            : (userData?.name ? (userData?.name?.split(" ")[0] + ": ") : "")}
           {data?.lastMessage}
         </p>
       </div>
@@ -364,9 +363,8 @@ const SellerInbox = ({
         {messages &&
           messages.map((item, index) => (
             <div
-              className={`flex w-full my-2 ${
-                item.sender === sellerId ? "justify-end" : "justify-start"
-              }`}
+              className={`flex w-full my-2 ${item.sender === sellerId ? "justify-end" : "justify-start"
+                }`}
               ref={scrollRef}
             >
               {item.sender !== sellerId && (
@@ -385,9 +383,8 @@ const SellerInbox = ({
               {item.text !== "" && (
                 <div>
                   <div
-                    className={`w-max p-2 rounded ${
-                      item.sender === sellerId ? "bg-[#000]" : "bg-[#38c776]"
-                    } text-[#fff] h-min`}
+                    className={`w-max p-2 rounded ${item.sender === sellerId ? "bg-[#000]" : "bg-[#38c776]"
+                      } text-[#fff] h-min`}
                   >
                     <p>{item.text}</p>
                   </div>

@@ -45,11 +45,11 @@ router.post(
         await sendMail({
           email: seller.email,
           subject: "Activate your Shop",
-          message: `Hello ${seller.name}, please click on the link to activate your shop: ${activationUrl}`,
+          message: `Hello ${seller.name}, please click on the link to activate your shop: ${activationUrl} Maximum waiting time within 10 minutes`,
         });
         res.status(201).json({
           success: true,
-          message: `please check your email:- ${seller.email} to activate your shop!`,
+          message: `please check your email:- ${seller.email} to activate your shop! Maximum waiting time within 10 minutes`,
         });
       } catch (error) {
         return next(new ErrorHandler(error.message, 500));
@@ -63,7 +63,7 @@ router.post(
 // create activation token
 const createActivationToken = (seller) => {
   return jwt.sign(seller, process.env.ACTIVATION_SECRET, {
-    expiresIn: "5m",
+    expiresIn: "11m",
   });
 };
 

@@ -47,12 +47,13 @@ const Singup = () => {
     axios
       .post(`${server}/user/create-user`, { name, email, password, avatar })
       .then((res) => {
-        toast.success(res.data.message);
         setName("");
         setEmail("");
         setPassword("");
         setAvatar();
         setLoading(false);
+        toast.success(res.data.message);
+
       })
 
       .catch((error) => {
