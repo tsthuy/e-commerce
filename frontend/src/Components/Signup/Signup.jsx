@@ -52,7 +52,7 @@ const Singup = () => {
         setPassword("");
         setAvatar();
         setLoading(false);
-        toast.success(res.data.message);
+        toast.success("User created successfully");
 
       })
 
