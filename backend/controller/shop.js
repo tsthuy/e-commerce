@@ -49,7 +49,7 @@ router.post(
         });
         res.status(201).json({
           success: true,
-          message: `please check your email:- ${seller.email} to activate your shop!`,
+          message: `please check your email:- ${seller.email} to activate your shop! Your email will be there in 10 minutes at the latest.`,
         });
       } catch (error) {
         return next(new ErrorHandler(error.message, 500));

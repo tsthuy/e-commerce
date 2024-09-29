@@ -313,7 +313,7 @@ const MessageList = ({
         <p className="text-[16px] text-[#000c]">
           {!loading && data?.lastMessageId !== userData?._id
             ? "You:"
-            : userData?.name.split(" ")[0] + ": "}{" "}
+            : (userData?.name ? (userData?.name?.split(" ")[0] + ": ") : "")}
           {data?.lastMessage}
         </p>
       </div>
