@@ -64,6 +64,7 @@ import axios from "axios";
 import { server } from "./server.js";
 import AdminProtectedRoute from "./routes/AdminProtectedRoute.jsx";
 import AdminOrderDetails from "./Components/Admin/AdminOrderDetails.jsx";
+import SellerProtectedLogout from "./routes/SellerProtectedLogout.jsx";
 const App = () => {
   const [stripeApiKey, setStripeApiKey] = useState("");
   async function getStripeApiKey() {
@@ -185,9 +186,9 @@ const App = () => {
           <Route
             path="/shop/:id"
             element={
-              <SellerProtectedRoute>
+              <SellerProtectedLogout>
                 <ShopHomePage />
-              </SellerProtectedRoute>
+              </SellerProtectedLogout>
             }
           />
           <Route

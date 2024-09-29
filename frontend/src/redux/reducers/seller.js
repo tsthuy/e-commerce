@@ -23,6 +23,13 @@ const sellerSlice = createSlice({
       state.isSeller = false;
     },
 
+    //logout seller
+    logoutSellerSuccess: (state) => {
+      state.isSeller = false;
+      state.seller = null;
+      state.isLoading = false;
+    },
+
     // get all sellers ---admin
     getAllSellersRequest: (state) => {
       state.isLoading = true;
@@ -44,6 +51,7 @@ export const {
   LoadSellerRequest,
   LoadSellerSuccess,
   LoadSellerFail,
+  logoutSellerSuccess,
   getAllSellersRequest,
   getAllSellersSuccess,
   getAllSellerFailed,
