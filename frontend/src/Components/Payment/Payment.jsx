@@ -10,11 +10,12 @@ import {
   useElements,
 } from "@stripe/react-stripe-js";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { server } from "../../server";
 import { toast } from "react-toastify";
 import { RxCross1 } from "react-icons/rx";
+import { clearCart, clearCartAction } from "../../redux/actions/cart";
 
 const Payment = () => {
   const [orderData, setOrderData] = useState([]);
@@ -23,7 +24,7 @@ const Payment = () => {
   const navigate = useNavigate();
   const stripe = useStripe();
   const elements = useElements();
-
+  const dispatch = useDispatch();
   useEffect(() => {
     const orderData = JSON.parse(localStorage.getItem("latestOrder"));
     setOrderData(orderData);
@@ -87,11 +88,12 @@ const Payment = () => {
       .post(`${server}/order/create-order`, order, config)
       .then((res) => {
         setOpen(false);
+        dispatch(clearCartAction());
         navigate("/order/success");
         toast.success("Order successful!");
         localStorage.setItem("cartItems", JSON.stringify([]));
         localStorage.setItem("latestOrder", JSON.stringify([]));
-        window.location.reload();
+        navigate("/profile");
       });
   };
 
@@ -134,14 +136,17 @@ const Payment = () => {
             })
             .then((res) => {
               setOpen(false);
+              dispatch(clearCartAction());
               navigate("/order/success");
               toast.success("Order successful!");
               localStorage.setItem("cartItems", JSON.stringify([]));
               localStorage.setItem("latestOrder", JSON.stringify([]));
-              window.location.reload();
+              navigate("/profile");
             });
         }
       }
+      window.location.reload();
+
     } catch (error) {
       toast.error(error);
     }
@@ -164,11 +169,12 @@ const Payment = () => {
       .post(`${server}/order/create-order`, order, config)
       .then((res) => {
         setOpen(false);
+        dispatch(clearCartAction());
         navigate("/order/success");
         toast.success("Order successful!");
         localStorage.setItem("cartItems", JSON.stringify([]));
         localStorage.setItem("latestOrder", JSON.stringify([]));
-        navigate("/");
+        navigate("/profile");
       });
   };
 
