@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import axios from "axios";
 import { server } from "../../server";
 import { toast } from "react-toastify";
+import { AiOutlineDown } from "react-icons/ai";
 
 const Checkout = () => {
   const { user } = useSelector((state) => state.user);
@@ -311,12 +312,12 @@ const ShippingInfo = ({
 
         <div></div>
       </form>
-      <h5
-        className="text-[18px] cursor-pointer inline-block font-bold"
+      <div
+        className=" flex text-[18px] text-[#F63B60] cursor-pointer font-bold hover:opacity-70 text-center"
         onClick={() => setUserInfo(!userInfo)}
       >
-        &#10549; Choose From saved address
-      </h5>
+        *Choose From saved address <AiOutlineDown className="mt-1" color="black" />
+      </div>
       {userInfo && (
         <div>
           {user &&
