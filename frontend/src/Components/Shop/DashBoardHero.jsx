@@ -209,7 +209,7 @@ const DashBoardHero = () => {
         </Col>
       </Row>
       <br />
-      <h3 className="text-[22px] font-Poppins pb-2">Revenue & Sales Trends</h3>
+      <h3 className="text-[22px] font-Poppins pb-2">Revenue & Orders Trends</h3>
       <div className="mb-4">
         {/* Line chart displaying revenue and order count per day */}
         <Line
@@ -257,6 +257,7 @@ const DashBoardHero = () => {
           columns={columns}
           dataSource={data}
           pagination={{ pageSize: 5 }}
+          bordered
         />
       </div>
     </div>
