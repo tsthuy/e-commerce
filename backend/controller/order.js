@@ -235,7 +235,6 @@ router.get(
 router.delete(
   "/shop/delete-order/:id",
   isAuthenticated,
-  isSeller,
   catchAsyncErrors(async (req, res, next) => {
     try {
       const order = await Order.findById(req.params.id);

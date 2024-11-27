@@ -7,11 +7,12 @@ import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllOrdersOfAdmin } from "../../redux/actions/order";
 import Loader from "../../Components/Layout/Loader";
-import { Table } from "antd";
+import { Select, Statistic, Table } from "antd";
 import { getAllSellers } from "../../redux/actions/seller";
 import TableData from "../../Common/TableData";
 import { Line } from "react-chartjs-2";
 import { Chart as ChartJS, defaults } from "chart.js/auto";
+import { Option } from "antd/es/mentions";
 
 const AdminDashboardMain = () => {
   const dispatch = useDispatch();
@@ -21,77 +22,119 @@ const AdminDashboardMain = () => {
   );
   const { sellers } = useSelector((state) => state.seller);
 
+  const [chartData, setChartData] = useState({ labels: [], datasets: [] });
+  const [timeRange, setTimeRange] = useState("today");
+
+  // Lấy dữ liệu đơn hàng và sellers
   useEffect(() => {
     dispatch(getAllOrdersOfAdmin());
     dispatch(getAllSellers());
   }, [dispatch]);
 
-  const [chartData, setChartData] = useState({
-    labels: [],
-    datasets: [],
-  });
-
+  // Lọc và xử lý dữ liệu cho biểu đồ
   useEffect(() => {
     if (adminOrders && adminOrders.length > 0) {
-      // Nhóm đơn hàng theo ngày (dùng Set để đảm bảo ngày không trùng lặp)
-      const ordersByDate = {};
-      adminOrders.forEach((order) => {
-        const date = moment(order.createdAt).format("YYYY-MM-DD");
-        if (!ordersByDate[date]) {
-          ordersByDate[date] = [];
-        }
-        ordersByDate[date].push(order);
-      });
+      const now = moment();
+      let filteredOrders = [];
 
-      // Lấy 7 ngày gần nhất có đơn hàng
-      const last7DaysWithOrders = Object.keys(ordersByDate)
-        .sort((a, b) => moment(b).diff(moment(a))) // Sắp xếp theo thứ tự thời gian từ mới đến cũ
-        .slice(0, 7); // Chỉ lấy 7 ngày gần nhất
-
-      const totalEarnings = [];
-      const ordersCount = [];
-
-      last7DaysWithOrders.forEach((date) => {
-        const ordersOfTheDay = ordersByDate[date];
-
-        // Tính tổng doanh thu của ngày
-        const totalEarningOfDay = ordersOfTheDay.reduce(
-          (acc, order) => acc + order.totalPrice * 0.1,
-          0
+      if (timeRange === "today") {
+        filteredOrders = adminOrders.filter((order) =>
+          moment(order.createdAt).isSame(now, "day")
         );
-        totalEarnings.push(totalEarningOfDay.toFixed(2)); // Lợi nhuận mỗi ngày
+      } else if (timeRange === "last7days") {
+        filteredOrders = adminOrders.filter((order) =>
+          moment(order.createdAt).isBetween(
+            now.clone().subtract(7, "days"),
+            now,
+            "day",
+            "[]"
+          )
+        );
+      } else if (timeRange === "last30days") {
+        filteredOrders = adminOrders.filter((order) =>
+          moment(order.createdAt).isBetween(
+            now.clone().subtract(30, "days"),
+            now,
+            "day",
+            "[]"
+          )
+        );
+      }
 
-        ordersCount.push(ordersOfTheDay.length); // Số lượng đơn hàng mỗi ngày
+      // Tính tổng doanh thu và số lượng đơn hàng
+      const revenueData = {};
+      const ordersCountData = {};
+
+      filteredOrders.forEach((order) => {
+        const date = moment(order.createdAt).format("YYYY-MM-DD");
+        revenueData[date] = (revenueData[date] || 0) + order.totalPrice * 0.1; // Admin nhận 10%
+        ordersCountData[date] = (ordersCountData[date] || 0) + 1;
       });
+
+      const labels = Object.keys(revenueData).sort();
+      const revenueValues = labels.map((date) => revenueData[date]);
+      const ordersCountValues = labels.map((date) => ordersCountData[date]);
 
       setChartData({
-        labels: last7DaysWithOrders.reverse(), // Đảo ngược để hiển thị từ cũ đến mới
+        labels,
         datasets: [
           {
-            label: "Total Earnings ($)",
-            data: totalEarnings.reverse(), // Phù hợp với nhãn ngày
+            label: "Admin Revenue (10%)",
+            data: revenueValues,
             borderColor: "rgba(75, 192, 192, 1)",
             backgroundColor: "rgba(75, 192, 192, 0.2)",
-            borderWidth: 2,
+            yAxisID: "y",
           },
           {
             label: "Orders Count",
-            data: ordersCount.reverse(), // Phù hợp với nhãn ngày
+            data: ordersCountValues,
             borderColor: "rgba(153, 102, 255, 1)",
             backgroundColor: "rgba(153, 102, 255, 0.2)",
-            borderWidth: 2,
+            yAxisID: "y-orders",
           },
         ],
       });
     }
-  }, [adminOrders]);
+  }, [adminOrders, timeRange]);
 
-  const adminEarning =
+  // Tổng doanh thu admin
+  const filteredAdminOrders =
     adminOrders &&
-    adminOrders.reduce((acc, item) => acc + item.totalPrice * 0.1, 0);
+    adminOrders.filter((order) => {
+      const now = moment();
+      if (timeRange === "today") {
+        return moment(order.createdAt).isSame(now, "day");
+      } else if (timeRange === "last7days") {
+        return moment(order.createdAt).isBetween(
+          now.clone().subtract(7, "days"),
+          now,
+          "day",
+          "[]"
+        );
+      } else if (timeRange === "last30days") {
+        return moment(order.createdAt).isBetween(
+          now.clone().subtract(30, "days"),
+          now,
+          "day",
+          "[]"
+        );
+      }
+      return false;
+    });
 
+  const adminEarning = filteredAdminOrders && filteredAdminOrders.reduce(
+    (acc, item) => acc + item.totalPrice * 0.1,
+    0
+  );
+  const adminEarningAll = adminOrders && adminOrders.reduce(
+    (acc, item) => acc + item.totalPrice * 0.1,
+    0
+  );
   const adminBalance = adminEarning?.toFixed(2);
+  const adminBalanceAll = adminEarningAll?.toFixed(2);
 
+
+  // Cấu hình bảng
   const columns = [
     {
       title: "Image",
@@ -145,12 +188,12 @@ const AdminDashboardMain = () => {
 
   const dataMapping = {
     id: (item) => item._id,
-    imageUrl: (item) => item.cart[0].images[0].url,
-    name: (item) => item.cart[0].name,
+    imageUrl: (item) => item.cart[0]?.images[0]?.url,
+    name: (item) => item.cart[0]?.name || "N/A",
     status: (item) => item.status,
     itemsQty: (item) => item.cart.reduce((acc, item) => acc + item.qty, 0),
     total: (item) => `${item.totalPrice} $`,
-    createdAt: (item) => item.createdAt.slice(0, 10),
+    createdAt: (item) => moment(item.createdAt).format("YYYY-MM-DD"),
   };
 
   return (
@@ -175,7 +218,7 @@ const AdminDashboardMain = () => {
                 </h3>
               </div>
               <h5 className="pt-2 pl-[36px] text-[22px] font-[500]">
-                $ {adminBalance}
+                $ {adminBalanceAll}
               </h5>
             </div>
 
@@ -219,18 +262,81 @@ const AdminDashboardMain = () => {
           </div>
 
           <br />
+          <div className="mb-4">
+            <Select
+              defaultValue="today"
+              style={{ width: 200 }}
+              onChange={(value) => setTimeRange(value)}
+            >
+              <Option value="today">Today</Option>
+              <Option value="last7days">Last 7 Days</Option>
+              <Option value="last30days">Last 30 Days</Option>
+            </Select>
+            <div className="flex justify-between mb-4">
+              <Statistic title="Total Revenue" value={`US$ ${adminBalance && adminBalance}`} />
+              <Statistic title="Total Orders" value={chartData.datasets[1]?.data.reduce((a, b) => a + b, 0)} />
+            </div>
+          </div>
+
           <h3 className="text-[22px] font-Poppins pb-2">Latest Orders</h3>
 
           <div className="w-full min-h-[45vh] bg-white rounded">
             {chartData.labels.length > 0 ? (
-              <Line data={chartData} />
+              <Line
+                data={chartData}
+                options={{
+                  scales: {
+                    x: {
+                      title: {
+                        display: true,
+                        text: "Date",
+                      },
+                    },
+                    y: {
+                      type: "linear",
+                      position: "left",
+                      title: {
+                        display: true,
+                        text: "Revenue (USD)",
+                      },
+                    },
+                    "y-orders": {
+                      type: "linear",
+                      position: "right",
+                      title: {
+                        display: true,
+                        text: "Number of Orders",
+                      },
+                      grid: {
+                        drawOnChartArea: false,
+                      },
+                    },
+                  },
+                  plugins: {
+                    legend: {
+                      position: "top",
+                    },
+                    title: {
+                      display: true,
+                      text: `Admin Revenue and Orders (${timeRange.replace(
+                        /last/,
+                        "Last "
+                      )})`,
+                    },
+                  },
+                }}
+              />
             ) : (
-              <p>Loading chart data...</p>
+              <p>No data available for the selected time range.</p>
             )}
           </div>
 
           <div className="w-full min-h-[45vh] bg-white rounded">
-            <TableData data={adminOrders} dataMapping={dataMapping} columns={columns} />
+            <TableData
+              data={adminOrders}
+              dataMapping={dataMapping}
+              columns={columns}
+            />
           </div>
         </div>
       )}

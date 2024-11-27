@@ -30,18 +30,19 @@ const AllRefundOrders = () => {
     {
       title: "Product",
       dataIndex: "product",
-      key: "id",
+      key: "product",
       width: 150,
       render: (_, record) => {
+        console.log(record);
         const displayName =
-          record.cart[0].name.length > 10
-            ? `${record.cart[0].name.substring(0, 10)}...`
-            : record.cart[0].name;
+          record.product.cart[0].name.length > 10
+            ? `${record.product.cart[0].name.substring(0, 10)}...`
+            : record.product.cart[0].name;
         return (
           <div className="flex items-center">
             <img
               className="w-10 h-10 rounded-lg"
-              src={record.cart[0].images[0].url}
+              src={record.product.cart[0].images[0].url}
               alt="product"
             />
             {displayName}
@@ -65,7 +66,7 @@ const AllRefundOrders = () => {
       dataIndex: "itemsQty",
       key: "itemsQty",
       width: 130,
-      render: (_, record) => <div>{record.cart.length}</div>,
+      render: (_, record) => <div>{record.product.cart.length}</div>,
     },
     {
       title: "Total",
@@ -75,7 +76,7 @@ const AllRefundOrders = () => {
       render: (_, record) =>
 
 
-        <div className="font-bold">{record.totalPrice}</div>
+        <div className="font-bold">{record.product.totalPrice}</div>
     },
     {
       title: "",
@@ -88,18 +89,13 @@ const AllRefundOrders = () => {
       ),
     },
   ];
-
-  const row = [];
-  refundOrders &&
-    refundOrders.forEach((item) => {
-      row.push({
-        product: item,
-        id: item._id,
-        itemsQty: item.cart.length,
-        total: item.totalPrice,
-        status: item.status,
-      });
-    });
+  console.log(refundOrders);
+  const dataMapping = {
+    product: (item) => item,
+    status: (item) => item.status,
+    itemsQty: (item) => item.cart.length,
+    total: (item) => item.total,
+  };
 
   return (
     <>
@@ -122,7 +118,7 @@ const AllRefundOrders = () => {
 
 
           {/* Render the filtered data in the table */}
-          <TableData columns={columns} data={filteredData} loading={isLoading} />
+          <TableData columns={columns} data={refundOrders} loading={isLoading} dataMapping={dataMapping} />
         </div>
       )}
     </>
