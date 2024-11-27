@@ -4,11 +4,11 @@ import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllOrdersOfShop } from "../../redux/actions/order";
 import { getAllProductsShop } from "../../redux/actions/product";
-import { Button, Row, Col, Statistic, Table, Tag } from "antd";
+import { Button, Row, Col, Statistic, Table, Tag, Select } from "antd";
 import { MdBorderClear } from "react-icons/md";
-import { Chart as ChartJS, defaults } from "chart.js/auto";
 import { Line } from "react-chartjs-2";
 import moment from "moment";
+import { Option } from "antd/es/mentions";
 
 const DashBoardHero = () => {
   const dispatch = useDispatch();
@@ -17,59 +17,78 @@ const DashBoardHero = () => {
   const { products } = useSelector((state) => state.products);
 
   const [chartData, setChartData] = useState({ labels: [], datasets: [] });
+  const [timeRange, setTimeRange] = useState("today");
+
 
   useEffect(() => {
     dispatch(getAllOrdersOfShop(seller._id));
     dispatch(getAllProductsShop(seller._id));
   }, [dispatch, seller._id]);
-  console.log(orders);
   const availableBalance = seller?.availableBalance.toFixed(2);
-
-  // Grouping the orders by day and calculating total revenue and total orders per day
   useEffect(() => {
     if (orders && orders.length > 0) {
-      const revenueByDay = {};
-      const ordersByDay = {};
+      const now = moment();
+      let filteredOrders = [];
 
-      // Group orders by day and calculate revenue and orders count per day
-      orders.forEach((order) => {
-        const day = moment(order.createdAt).format("DD MMM YYYY");
-        if (!revenueByDay[day]) {
-          revenueByDay[day] = 0;
-          ordersByDay[day] = 0;
-        }
-        revenueByDay[day] += order.totalPrice;
-        ordersByDay[day] += 1;
+      if (timeRange === "today") {
+        filteredOrders = orders.filter((order) =>
+          moment(order.createdAt).isSame(now, "day")
+        );
+      } else if (timeRange === "last7days") {
+        filteredOrders = orders.filter((order) =>
+          moment(order.createdAt).isBetween(
+            now.clone().subtract(7, "days"),
+            now,
+            "day",
+            "[]"
+          )
+        );
+      } else if (timeRange === "last30days") {
+        filteredOrders = orders.filter((order) =>
+          moment(order.createdAt).isBetween(
+            now.clone().subtract(30, "days"),
+            now,
+            "day",
+            "[]"
+          )
+        );
+      }
+
+      // Tính tổng doanh thu và số lượng đơn hàng từ `filteredOrders`
+      const revenueData = {};
+      const ordersCountData = {};
+
+      filteredOrders.forEach((order) => {
+        const date = moment(order.createdAt).format("YYYY-MM-DD");
+        revenueData[date] = (revenueData[date] || 0) + order.totalPrice;
+        ordersCountData[date] = (ordersCountData[date] || 0) + 1;
       });
 
-      // Get the last 7 days with orders
-      const sortedDays = Object.keys(revenueByDay).sort((a, b) => moment(a, "DD MMM YYYY") - moment(b, "DD MMM YYYY"));
-      const last7Days = sortedDays.slice(-7);
-
-      const revenueData = last7Days.map((day) => revenueByDay[day]);
-      const ordersData = last7Days.map((day) => ordersByDay[day]);
+      const labels = Object.keys(revenueData).sort();
+      const revenueValues = labels.map((date) => revenueData[date]);
+      const ordersCountValues = labels.map((date) => ordersCountData[date]);
 
       setChartData({
-        labels: last7Days,
+        labels,
         datasets: [
           {
-            label: "Revenue (USD)",
-            data: revenueData,
-            backgroundColor: "#064FF0",
-            borderColor: "#064FF0",
-            yAxisID: "y-revenue",
+            label: "Revenue",
+            data: revenueValues,
+            borderColor: "rgba(75, 192, 192, 1)",
+            backgroundColor: "rgba(75, 192, 192, 0.2)",
+            yAxisID: "y",
           },
           {
             label: "Orders",
-            data: ordersData,
-            backgroundColor: "#FF3030",
-            borderColor: "#FF3030",
+            data: ordersCountValues,
+            borderColor: "rgba(153, 102, 255, 1)",
+            backgroundColor: "rgba(153, 102, 255, 0.2)",
             yAxisID: "y-orders",
           },
         ],
       });
     }
-  }, [orders]);
+  }, [orders, timeRange]);
 
   const columns = [
     {
@@ -157,6 +176,29 @@ const DashBoardHero = () => {
     id: order._id,
   }));
 
+  const totalRevenue = orders && orders.filter((order) => {
+    const now = moment();
+    if (timeRange === "today") {
+      return moment(order.createdAt).isSame(now, "day");
+    } else if (timeRange === "last7days") {
+      return moment(order.createdAt).isBetween(
+        now.clone().subtract(7, "days"),
+        now,
+        "day",
+        "[]"
+      );
+    } else if (timeRange === "last30days") {
+      return moment(order.createdAt).isBetween(
+        now.clone().subtract(30, "days"),
+        now,
+        "day",
+        "[]"
+      );
+    }
+    return false;
+  })
+    .reduce((sum, order) => sum + order.totalPrice, 0);
+
   return (
     <div className="w-full p-8">
       <h3 className="text-[22px] font-Poppins pb-2">Overview</h3>
@@ -209,42 +251,58 @@ const DashBoardHero = () => {
         </Col>
       </Row>
       <br />
-      <h3 className="text-[22px] font-Poppins pb-2">Revenue & Sales Trends</h3>
-      <div className="mb-4">
-        {/* Line chart displaying revenue and order count per day */}
+      <div>
+        <h3 className="text-[22px] font-Poppins pb-2">Revenue & Sales Trends</h3>
+        <Select
+          defaultValue="today"
+          style={{ width: 200, marginBottom: 20 }}
+          onChange={(value) => setTimeRange(value)}
+        >
+          <Option value="today">Today</Option>
+          <Option value="last7days">Last 7 Days</Option>
+          <Option value="last30days">Last 30 Days</Option>
+        </Select>
+        <div className="flex justify-between mb-4">
+          <Statistic title="Total Revenue" value={`US$ ${totalRevenue && totalRevenue.toFixed(2)}`} />
+          <Statistic title="Total Orders" value={chartData.datasets[1]?.data.reduce((a, b) => a + b, 0)} />
+        </div>
         <Line
           data={chartData}
           options={{
             scales: {
+              x: {
+                title: {
+                  display: true,
+                  text: "Date",
+                },
+              },
               y: {
                 type: "linear",
-                display: false,
-                position: "left", // Trục y cho doanh thu (Revenue)
-
+                position: "left",
+                title: {
+                  display: true,
+                  text: "Revenue (USD)",
+                },
               },
               "y-orders": {
                 type: "linear",
-                display: true,
-                position: "right", // Trục y cho số lượng đơn hàng
+                position: "right",
+                title: {
+                  display: true,
+                  text: "Number of Orders",
+                },
                 grid: {
-                  drawOnChartArea: false, // Ngăn không cho lưới vẽ lên biểu đồ
+                  drawOnChartArea: false,
                 },
-                ticks: {
-                  callback: function (value) {
-                    return value; // Hiển thị với đơn vị đơn hàng
-                  },
-                },
-              },
-            },
-            elements: {
-              line: {
-                tension: 0.5,
               },
             },
             plugins: {
+              legend: {
+                position: "top",
+              },
               title: {
-                text: "Monthly Revenue & Orders",
                 display: true,
+                text: `Revenue and Orders (${timeRange.replace(/last/, "Last ")})`,
               },
             },
           }}
