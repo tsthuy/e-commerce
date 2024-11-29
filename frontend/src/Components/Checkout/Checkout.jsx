@@ -194,6 +194,7 @@ const ShippingInfo = ({
   userInfo,
   setUserInfo,
   address1,
+
   setAddress1,
   address2,
   setAddress2,
