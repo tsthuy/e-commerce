@@ -8,8 +8,7 @@ import Ratings from "../Products/Ratings";
 import { getAllEventsShop } from "../../redux/actions/event";
 const ShopProfileData = ({ isOwner }) => {
   const { products } = useSelector((state) => state.products);
-  console.log(products);
-    const { events } = useSelector((state) => state.events);
+  const { events } = useSelector((state) => state.events);
   const { id } = useParams();
   const dispatch = useDispatch();
   useEffect(() => {
@@ -20,7 +19,7 @@ const ShopProfileData = ({ isOwner }) => {
   const [active, setActive] = useState(1);
 
   const allReviews =
-  products && products.map((product) => product.reviews).flat();
+    products && products.map((product) => product.reviews).flat();
 
   return (
     <div className="w-full">
@@ -28,18 +27,16 @@ const ShopProfileData = ({ isOwner }) => {
         <div className="w-full flex">
           <div className="flex items-center" onClick={() => setActive(1)}>
             <h5
-              className={`font-[600] text-[20px] ${
-                active === 1 ? "text-red-500" : "text-[#333]"
-              } cursor-pointer pr-[20px]`}
+              className={`font-[600] text-[20px] ${active === 1 ? "text-red-500" : "text-[#333]"
+                } cursor-pointer pr-[20px]`}
             >
               Shop Products
             </h5>
           </div>
           <div className="flex items-center" onClick={() => setActive(2)}>
             <h5
-              className={`font-[600] text-[20px] ${
-                active === 2 ? "text-red-500" : "text-[#333]"
-              } cursor-pointer pr-[20px]`}
+              className={`font-[600] text-[20px] ${active === 2 ? "text-red-500" : "text-[#333]"
+                } cursor-pointer pr-[20px]`}
             >
               Running Events
             </h5>
@@ -47,9 +44,8 @@ const ShopProfileData = ({ isOwner }) => {
 
           <div className="flex items-center" onClick={() => setActive(3)}>
             <h5
-              className={`font-[600] text-[20px] ${
-                active === 3 ? "text-red-500" : "text-[#333]"
-              } cursor-pointer pr-[20px]`}
+              className={`font-[600] text-[20px] ${active === 3 ? "text-red-500" : "text-[#333]"
+                } cursor-pointer pr-[20px]`}
             >
               Shop Reviews
             </h5>
@@ -115,7 +111,6 @@ const ShopProfileData = ({ isOwner }) => {
                     <Ratings rating={item.rating} />
                   </div>
                   <p className="font-[400] text-[#000000a7]">{item?.comment}</p>
-                  <p className="text-[#000000a7] text-[14px]">{"2days ago"}</p>
                 </div>
               </div>
             ))}

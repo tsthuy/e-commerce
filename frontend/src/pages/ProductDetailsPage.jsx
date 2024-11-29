@@ -13,17 +13,16 @@ const ProductDetailsPage = () => {
   const [data, setData] = useState(null);
   const [searchParams] = useSearchParams();
   const eventData = searchParams.get("isEvent");
-  console.log(id);
-  console.log(allEvents);
   useEffect(() => {
     if (eventData !== null) {
-      const data = allEvents && allEvents.find((i) => i._id === id);
-      setData(data);
+      const event = allEvents?.find((i) => i._id === id);
+      setData(event);
     } else {
-      const dataSend = allProducts && allProducts.find((i) => i._id == id);
-      setData(dataSend);
+      const product = allProducts?.find((i) => i._id === id);
+      setData(product);
     }
-  }, [id]);
+  }, [id, allProducts, allEvents, eventData]);  // Add allProducts, allEvents, and eventData as dependencies
+
 
   return (
     <div>
