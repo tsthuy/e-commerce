@@ -9,7 +9,7 @@ const cors = require("cors");
 
 app.use(
   cors({
-    origin: ["http://localhost:3000"],
+    origin: ["https://e-commerce-nu-lyart.vercel.app"],
     credentials: true,
   })
 );
@@ -20,7 +20,7 @@ app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
 
 if (process.env.NODE_ENV !== "PRODUCTION") {
   require("dotenv").config({
-    path: "backend/config/.env",
+    path: "config/.env",
   });
 }
 
