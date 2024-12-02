@@ -36,7 +36,7 @@ const { isAuthenticated, isAdmin } = require("../middleware/auth");
 
 //     const activationToken = createActivationToken(user);
 
-//     const activationUrl = `https://e-commerce-nu-lyart.vercel.app/activation/${activationToken}`;
+//     const activationUrl = `http://localhost:3000/activation/${activationToken}`;
 
 //     try {
 //       await sendMail({
@@ -130,7 +130,6 @@ router.post("/create-user", async (req, res, next) => {
     return next(new ErrorHandler(error.message, 400));
   }
 });
-
 // login user
 router.post(
   "/login-user",
