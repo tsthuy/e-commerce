@@ -222,13 +222,13 @@ export const categoriesData = [
     title: "Shoes",
     subTitle: "",
     image_Url:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvBQPQMVNRd6TtDkGs2dCri0Y-rxKkFOiEWw&usqp=CAU",
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSiP6r-23sdVqWN34LqdAdIm7VE7vHkRmqMdQ&s",
   },
   {
     id: 6,
     title: "Gifts",
     subTitle: "",
-    image_Url: "https://gretchenrubin.com/wp-content/uploads/2020/11/gifts.jpg",
+    image_Url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSLrWgk-ugw35TRnz68LRHghEvHB2bsKV6Msw&s",
   },
   {
     id: 7,

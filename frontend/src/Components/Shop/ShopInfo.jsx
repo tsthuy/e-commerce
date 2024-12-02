@@ -12,10 +12,8 @@ const ShopInfo = ({ isOwner }) => {
   const [data, setData] = useState({});
   const { products } = useSelector((state) => state.products);
   const { seller } = useSelector((state) => state.seller);
-  console.log(seller);
   const [isLoading, setIsLoading] = useState(false);
   const { id } = useParams();
-  console.log(id);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -25,7 +23,6 @@ const ShopInfo = ({ isOwner }) => {
     axios
       .get(`${server}/shop/get-shop-info/${id}`)
       .then((res) => {
-        console.log(res);
         setData(res.data.shop);
         setIsLoading(false);
       })

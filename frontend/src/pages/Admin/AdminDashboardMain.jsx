@@ -67,11 +67,13 @@ const AdminDashboardMain = () => {
 
       filteredOrders.forEach((order) => {
         const date = moment(order.createdAt).format("YYYY-MM-DD");
+        console.log(date);
         revenueData[date] = (revenueData[date] || 0) + order.totalPrice * 0.1; // Admin nhận 10%
         ordersCountData[date] = (ordersCountData[date] || 0) + 1;
       });
 
       const labels = Object.keys(revenueData).sort();
+      console.log(labels);
       const revenueValues = labels.map((date) => revenueData[date]);
       const ordersCountValues = labels.map((date) => ordersCountData[date]);
 
@@ -218,7 +220,7 @@ const AdminDashboardMain = () => {
                 </h3>
               </div>
               <h5 className="pt-2 pl-[36px] text-[22px] font-[500]">
-                $ {adminBalanceAll}
+                US$ {adminBalanceAll}
               </h5>
             </div>
 

@@ -65,7 +65,7 @@ const AllProducts = () => {
       width: 130,
     },
     {
-      title: "",
+      title: "Preview",
       key: "preview",
       width: 100,
       render: (_, record) => (
@@ -79,7 +79,7 @@ const AllProducts = () => {
               setSelectedProduct(record.product);
             }
             }
-            color="#FA5130"
+            color="blue"
             title="Quick view"
           />
         </Button>
@@ -91,11 +91,6 @@ const AllProducts = () => {
       width: 150,
       render: (_, record) => (
         <div style={{ display: "flex", gap: "10px" }}>
-          <Link to={`/edit-product/${record.id}`}>
-            <Button>
-              <AiOutlineEdit size={20} />
-            </Button>
-          </Link>
           <Button
             onClick={() => {
               setLoading(true);

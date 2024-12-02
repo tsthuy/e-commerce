@@ -24,7 +24,7 @@ const DashBoardHero = () => {
     dispatch(getAllOrdersOfShop(seller._id));
     dispatch(getAllProductsShop(seller._id));
   }, [dispatch, seller._id]);
-  const availableBalance = seller?.availableBalance.toFixed(2);
+  const availableBalance = seller?.availableBalance;
   useEffect(() => {
     if (orders && orders.length > 0) {
       const now = moment();
@@ -213,7 +213,7 @@ const DashBoardHero = () => {
               </h3>
             </div>
             <div className="">
-              <Statistic title="Balance" value={availableBalance} precision={0} />
+              <Statistic title="Balance" value={`US$ ${availableBalance}`} />
 
             </div>
             <Link to="/dashboard-withdraw-money">
